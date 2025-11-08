@@ -17,7 +17,7 @@ import { useTopicPage } from '../features/topic/api';
 const decodeBase64 = (str: string): string => {
   try {
     return atob(str);
-  } catch (e) {
+  } catch (_err) {
     return 'Invalid base64 string';
   }
 };
@@ -119,7 +119,7 @@ export const TopicPage: React.FC = () => {
               </Typography>
               <Paper sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {topic?.subscriptions.map((sub) => (
+                  {topic?.subscriptions.map((sub: string) => (
                     <Chip key={sub} label={sub} />
                   ))}
                 </Box>

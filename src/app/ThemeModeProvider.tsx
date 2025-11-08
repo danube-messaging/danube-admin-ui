@@ -1,30 +1,17 @@
-import React, { createContext, useContext, useMemo, useState, PropsWithChildren, useEffect } from 'react';
+import React, { useMemo, useState, PropsWithChildren, useEffect } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme as lightTheme, darkTheme } from './theme';
-
-type ThemeMode = 'light' | 'dark';
-
-interface ThemeModeContextValue {
-    mode: ThemeMode;
-    toggle: () => void;
-}
-
-const ThemeModeContext = createContext<ThemeModeContextValue | undefined>(undefined);
-
-export const useThemeMode = () => {
-    const ctx = useContext(ThemeModeContext);
-    if (!ctx) throw new Error('useThemeMode must be used within ThemeModeProvider');
-    return ctx;
-};
+import type { ThemeMode } from './themeMode';
+import { ThemeModeContext } from './themeMode';
 
 export const ThemeModeProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [mode, setMode] = useState<ThemeMode>(() => {
-        try {
+        if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('theme.mode');
-            if (saved === 'light' || saved === 'dark') return saved;
-        } catch {}
-        if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
+            if (saved === 'light' || saved === 'dark') return saved as ThemeMode;
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
         }
         return 'light';
     });
@@ -36,9 +23,9 @@ export const ThemeModeProvider: React.FC<PropsWithChildren> = ({ children }) => 
     );
 
     useEffect(() => {
-        try {
+        if (typeof window !== 'undefined') {
             localStorage.setItem('theme.mode', mode);
-        } catch {}
+        }
     }, [mode]);
 
     return (

@@ -10,20 +10,12 @@ export const AppLayout: React.FC = () => {
   const isOverMd = useMediaQuery(theme.breakpoints.up('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopExpanded, setDesktopExpanded] = useState<boolean>(() => {
-    try {
-      const v = localStorage.getItem('nav.desktopExpanded');
-      return v === null ? true : v === 'true';
-    } catch {
-      return true;
-    }
+    const v = localStorage.getItem('nav.desktopExpanded');
+    return v === null ? true : v === 'true';
   });
-  const [mobileExpanded, setMobileExpanded] = useState<boolean>(() => {
-    try {
-      const v = localStorage.getItem('nav.mobileExpanded');
-      return v === null ? false : v === 'true';
-    } catch {
-      return false;
-    }
+  const [mobileExpanded, _setMobileExpanded] = useState<boolean>(() => {
+    const v = localStorage.getItem('nav.mobileExpanded');
+    return v === null ? false : v === 'true';
   });
   const handleDrawerToggle = () => setMobileOpen((o) => !o);
   const handleMenuClick = () => {
@@ -34,22 +26,14 @@ export const AppLayout: React.FC = () => {
     }
   };
   const isNavigationExpanded = isOverMd ? desktopExpanded : mobileExpanded;
-  const setIsNavigationExpanded = (v: boolean) => {
-    if (isOverMd) setDesktopExpanded(v);
-    else setMobileExpanded(v);
-  };
   const sideWidth = useMemo(() => (isNavigationExpanded ? expandedWidth : collapsedWidth), [isNavigationExpanded]);
   const layoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('nav.desktopExpanded', String(desktopExpanded));
-    } catch {}
+    localStorage.setItem('nav.desktopExpanded', String(desktopExpanded));
   }, [desktopExpanded]);
   useEffect(() => {
-    try {
-      localStorage.setItem('nav.mobileExpanded', String(mobileExpanded));
-    } catch {}
+    localStorage.setItem('nav.mobileExpanded', String(mobileExpanded));
   }, [mobileExpanded]);
 
   return (
