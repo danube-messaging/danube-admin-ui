@@ -1,4 +1,5 @@
-import React, { useMemo, useState, PropsWithChildren, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import type { PropsWithChildren } from 'react';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme as lightTheme, darkTheme } from './theme';
 import type { ThemeMode } from './themeMode';

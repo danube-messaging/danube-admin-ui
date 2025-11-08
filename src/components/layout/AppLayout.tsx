@@ -32,7 +32,7 @@ export const AppLayout: React.FC = () => {
   return (
     <Box ref={layoutRef} sx={{ display: 'flex', position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>
       <CssBaseline />
-      <TopBar onMenuClick={handleMenuClick} sideWidth={sideWidth} />
+      <TopBar onMenuClick={handleMenuClick} />
       <SideNav
         mobileOpen={mobileOpen}
         onClose={handleDrawerToggle}
