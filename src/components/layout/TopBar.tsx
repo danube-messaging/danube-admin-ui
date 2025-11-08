@@ -4,7 +4,7 @@ import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
-import { useThemeMode } from '../../app/ThemeModeProvider';
+import { useThemeMode } from '../../app/themeMode';
 import danubeLogo from '../../assets/danube.png';
 
 interface TopBarProps {

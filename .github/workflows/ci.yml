@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install pnpm (global)
+        run: npm i -g pnpm@9
+
+      - name: Verify pnpm
+        run: pnpm -v
+
+      - name: Install patch-package (global)
+        run: npm i -g patch-package@8
+
+      # Optional: Add pnpm store cache later once pnpm is installed
+      # - name: Cache pnpm store
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/.pnpm-store
+      #     key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install dependencies (pnpm)
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Build
+        run: pnpm run build
