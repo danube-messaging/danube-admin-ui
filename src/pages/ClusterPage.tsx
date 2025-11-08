@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Alert,
   Box,
-  Card,
-  CardContent,
   Grid,
   LinearProgress,
   Paper,
@@ -14,9 +12,11 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Chip,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useClusterPage } from '../features/cluster/api';
+import { KpiCard } from '../components/common/KpiCard';
 
 export const ClusterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -50,46 +50,25 @@ export const ClusterPage: React.FC = () => {
 
       {data && (
         <>
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+            <Typography variant="h4">Dashboard</Typography>
+            <Typography variant="caption" color="text.secondary">
+              Updated at {new Date(data.timestamp).toLocaleString()}
+            </Typography>
+          </Box>
+
           <Grid container spacing={3} mb={3}>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Brokers
-                  </Typography>
-                  <Typography variant="h5">{totals?.broker_count}</Typography>
-                </CardContent>
-              </Card>
+              <KpiCard title="Brokers" value={totals?.broker_count ?? 0} />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Topics
-                  </Typography>
-                  <Typography variant="h5">{totals?.topics_total}</Typography>
-                </CardContent>
-              </Card>
+              <KpiCard title="Topics" value={totals?.topics_total ?? 0} />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Total RPCs
-                  </Typography>
-                  <Typography variant="h5">{totals?.rpc_total}</Typography>
-                </CardContent>
-              </Card>
+              <KpiCard title="Total RPCs" value={totals?.rpc_total ?? 0} />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <Card>
-                <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
-                    Active Connections
-                  </Typography>
-                  <Typography variant="h5">{totals?.active_connections}</Typography>
-                </CardContent>
-              </Card>
+              <KpiCard title="Active Connections" value={totals?.active_connections ?? 0} />
             </Grid>
           </Grid>
 
@@ -117,7 +96,14 @@ export const ClusterPage: React.FC = () => {
                   >
                     <TableCell>{broker.broker_id}</TableCell>
                     <TableCell>{broker.broker_addr}</TableCell>
-                    <TableCell>{broker.broker_role}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={broker.broker_role.replace('_', ' ')}
+                        size="small"
+                        color={broker.broker_role === 'Cluster_Leader' ? 'primary' : 'default'}
+                        variant={broker.broker_role === 'Cluster_Leader' ? 'filled' : 'outlined'}
+                      />
+                    </TableCell>
                     <TableCell>{broker.stats.topics_owned}</TableCell>
                     <TableCell>{broker.stats.rpc_total}</TableCell>
                   </TableRow>
@@ -130,3 +116,4 @@ export const ClusterPage: React.FC = () => {
     </Box>
   );
 };
+

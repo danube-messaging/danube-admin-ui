@@ -36,5 +36,7 @@ export const useClusterPage = () => {
   return useQuery<ClusterPageData>({
     queryKey: [CLUSTER_PAGE_KEY],
     queryFn: () => fetcher<ClusterPageData>('/ui/v1/cluster'),
+    refetchInterval: 5000,
+    staleTime: 3000,
   });
 };

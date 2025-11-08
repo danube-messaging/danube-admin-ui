@@ -12,4 +12,5 @@ services:
       - /app/node_modules # prevent overwriting node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true # helps with file watching in Docker
+      - VITE_GATEWAY_BASE_URL=http://localhost:8080
     command: pnpm dev --host 0.0.0.0
