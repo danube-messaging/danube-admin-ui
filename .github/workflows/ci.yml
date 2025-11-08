@@ -27,6 +27,9 @@ jobs:
       - name: Verify pnpm
         run: pnpm -v
 
+      - name: Install patch-package (global)
+        run: npm i -g patch-package@8
+
       # Optional: Add pnpm store cache later once pnpm is installed
       # - name: Cache pnpm store
       #   uses: actions/cache@v4
