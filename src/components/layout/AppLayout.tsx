@@ -13,28 +13,21 @@ export const AppLayout: React.FC = () => {
     const v = localStorage.getItem('nav.desktopExpanded');
     return v === null ? true : v === 'true';
   });
-  const [mobileExpanded, _setMobileExpanded] = useState<boolean>(() => {
-    const v = localStorage.getItem('nav.mobileExpanded');
-    return v === null ? false : v === 'true';
-  });
-  const handleDrawerToggle = () => setMobileOpen((o) => !o);
+  const handleDrawerToggle = () => setMobileOpen((prev: boolean) => !prev);
   const handleMenuClick = () => {
     if (isOverMd) {
-      setDesktopExpanded((v) => !v);
+      setDesktopExpanded((prev: boolean) => !prev);
     } else {
-      setMobileOpen((o) => !o);
+      setMobileOpen((prev: boolean) => !prev);
     }
   };
-  const isNavigationExpanded = isOverMd ? desktopExpanded : mobileExpanded;
+  const isNavigationExpanded = isOverMd ? desktopExpanded : true;
   const sideWidth = useMemo(() => (isNavigationExpanded ? expandedWidth : collapsedWidth), [isNavigationExpanded]);
   const layoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     localStorage.setItem('nav.desktopExpanded', String(desktopExpanded));
   }, [desktopExpanded]);
-  useEffect(() => {
-    localStorage.setItem('nav.mobileExpanded', String(mobileExpanded));
-  }, [mobileExpanded]);
 
   return (
     <Box ref={layoutRef} sx={{ display: 'flex', position: 'relative', overflow: 'hidden', height: '100%', width: '100%' }}>

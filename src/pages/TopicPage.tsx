@@ -17,7 +17,7 @@ import { useTopicPage } from '../features/topic/api';
 const decodeBase64 = (str: string): string => {
   try {
     return atob(str);
-  } catch (_err) {
+  } catch {
     return 'Invalid base64 string';
   }
 };
