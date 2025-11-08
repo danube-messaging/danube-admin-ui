@@ -13,6 +13,7 @@ import {
   TableRow,
   Typography,
   Chip,
+  Button,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useClusterPage } from '../features/cluster/api';
@@ -51,7 +52,7 @@ export const ClusterPage: React.FC = () => {
       {data && (
         <>
           <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography variant="h4">Dashboard</Typography>
+            <Typography variant="h4">Danube Cluster</Typography>
             <Typography variant="caption" color="text.secondary">
               Updated at {new Date(data.timestamp).toLocaleString()}
             </Typography>
@@ -84,6 +85,7 @@ export const ClusterPage: React.FC = () => {
                   <TableCell>Role</TableCell>
                   <TableCell>Topics</TableCell>
                   <TableCell>RPCs</TableCell>
+                  <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -106,6 +108,17 @@ export const ClusterPage: React.FC = () => {
                     </TableCell>
                     <TableCell>{broker.stats.topics_owned}</TableCell>
                     <TableCell>{broker.stats.rpc_total}</TableCell>
+                    <TableCell align="right">
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        Unload
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

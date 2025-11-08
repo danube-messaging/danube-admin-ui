@@ -14,9 +14,15 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Button,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBrokerPage } from '../features/broker/api';
+import AddIcon from '@mui/icons-material/AddOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
 
 export const BrokerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -103,9 +109,17 @@ export const BrokerPage: React.FC = () => {
             </Grid>
           </Grid>
 
-          <Typography variant="h6" gutterBottom>
-            Topics
-          </Typography>
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+            <Typography variant="h6">Topics</Typography>
+            <Button
+              variant="contained"
+              size="small"
+              startIcon={<AddIcon />}
+              onClick={() => {}}
+            >
+              Create
+            </Button>
+          </Box>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -113,6 +127,7 @@ export const BrokerPage: React.FC = () => {
                   <TableCell>Name</TableCell>
                   <TableCell>Producers</TableCell>
                   <TableCell>Consumers</TableCell>
+                  <TableCell align="right">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -126,6 +141,18 @@ export const BrokerPage: React.FC = () => {
                     <TableCell>{topic.name}</TableCell>
                     <TableCell>{topic.producers_connected}</TableCell>
                     <TableCell>{topic.consumers_connected}</TableCell>
+                    <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                      <Tooltip title="Move to another broker">
+                        <IconButton size="small" aria-label="move topic">
+                          <MoveIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Delete topic">
+                        <IconButton size="small" color="error" aria-label="delete topic">
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

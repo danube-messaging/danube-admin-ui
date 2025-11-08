@@ -1,23 +1,48 @@
-import React from 'react';
-import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, IconButton, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import React, { useEffect, useState } from 'react';
+import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import StorageIcon from '@mui/icons-material/StorageOutlined';
 import TopicIcon from '@mui/icons-material/TopicOutlined';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-export const collapsedWidth = 72;
+export const collapsedWidth = 104;
 export const expandedWidth = 240;
 
 interface SideNavProps {
   mobileOpen: boolean;
   onClose: () => void;
   expanded: boolean;
-  onToggleExpand: () => void;
+  container?: HTMLElement | undefined;
 }
 
-export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded, onToggleExpand }) => {
+export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded, container }) => {
   const { pathname } = useLocation();
+  const theme = useTheme();
   const width = expanded ? expandedWidth : collapsedWidth;
+  const mini = !expanded;
+
+  const [isFullyExpanded, setIsFullyExpanded] = useState(expanded);
+  const [isFullyCollapsed, setIsFullyCollapsed] = useState(!expanded);
+
+  useEffect(() => {
+    if (expanded) {
+      const timeout = setTimeout(() => {
+        setIsFullyExpanded(true);
+      }, theme.transitions.duration.enteringScreen);
+      return () => clearTimeout(timeout);
+    }
+    setIsFullyExpanded(false);
+  }, [expanded, theme.transitions.duration.enteringScreen]);
+
+  useEffect(() => {
+    if (!expanded) {
+      const timeout = setTimeout(() => {
+        setIsFullyCollapsed(true);
+      }, theme.transitions.duration.leavingScreen);
+      return () => clearTimeout(timeout);
+    }
+    setIsFullyCollapsed(false);
+  }, [expanded, theme.transitions.duration.leavingScreen]);
 
   const drawerContent = (
     <>
@@ -27,7 +52,7 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText primary="Cluster" />
         </ListItemButton>
         <ListItemButton disabled>
           <ListItemIcon>
@@ -52,14 +77,16 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
         variant="temporary"
         open={mobileOpen}
         onClose={onClose}
+        container={container}
         ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: 'block', md: 'none' },
           [`& .MuiDrawer-paper`]: {
             width: 240,
             boxSizing: 'border-box',
-            bgcolor: '#0b2a5b',
-            color: '#e3f2fd',
+            bgcolor: (t) => (t.palette.mode === 'dark' ? '#071a36' : '#e2e8f0'),
+            color: (t) => (t.palette.mode === 'dark' ? '#e3f2fd' : t.palette.text.primary),
+            transition: (t) => t.transitions.create('width', { duration: t.transitions.duration.standard }),
           },
         }}
       >
@@ -74,55 +101,178 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
           [`& .MuiDrawer-paper`]: {
             width,
             boxSizing: 'border-box',
-            bgcolor: '#0b2a5b',
-            color: '#e3f2fd',
+            bgcolor: (t) => (t.palette.mode === 'dark' ? '#071a36' : '#e2e8f0'),
+            color: (t) => (t.palette.mode === 'dark' ? '#e3f2fd' : t.palette.text.primary),
+            transition: (t) => t.transitions.create('width', { duration: t.transitions.duration.standard }),
           },
         }}
         open
       >
-        <Toolbar sx={{ px: 1, justifyContent: expanded ? 'space-between' : 'center', gap: 1 }}>
-          <IconButton size="small" onClick={onToggleExpand} aria-label={expanded ? 'Collapse sidebar' : 'Expand sidebar'} sx={{ color: 'inherit' }}>
-            <MenuIcon fontSize="small" />
-          </IconButton>
-          {expanded && (
-            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 600 }}>
-              Danube Admin
-            </Typography>
-          )}
-        </Toolbar>
+        <Toolbar />
         <List sx={{
-          [`& .MuiListItemButton-root`]: {
-            py: 1.5,
-            px: expanded ? 1.5 : 1,
-            justifyContent: expanded ? 'flex-start' : 'center',
-          },
-          [`& .MuiListItemIcon-root`]: {
-            minWidth: 0,
-            justifyContent: 'center',
-            color: 'inherit',
-          },
-          [`& .MuiListItemText-root`]: {
-            display: expanded ? 'block' : 'none',
-            ml: 1,
-          },
+          p: mini ? 0 : 0.5,
         }}>
-          <ListItemButton component={RouterLink} to="/cluster" selected={pathname.startsWith('/cluster')}>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+          <ListItemButton
+            component={RouterLink}
+            to="/cluster"
+            selected={pathname.startsWith('/cluster')}
+            sx={{
+              height: mini ? 50 : 'auto',
+              py: mini ? 0 : 1.5,
+              px: 1,
+              position: 'relative',
+              borderRadius: 1,
+              transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
+              '&:hover': {
+                backgroundColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'
+              },
+              '&.Mui-selected': {
+                backgroundColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
+              },
+              '&.Mui-selected:hover': {
+                backgroundColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)'
+              },
+              '&.Mui-selected::before': {
+                content: '""',
+                position: 'absolute',
+                left: 0,
+                top: 6,
+                bottom: 6,
+                width: 3,
+                bgcolor: 'primary.main',
+                borderRadius: 1,
+              },
+            }}
+          >
+            <Box sx={mini ? {
+              position: 'absolute',
+              left: '50%',
+              top: 'calc(50% - 6px)',
+              transform: 'translate(-50%, -50%)',
+            } : {}}>
+              <ListItemIcon sx={{
+                minWidth: 0,
+                justifyContent: mini ? 'center' : 'flex-start',
+                color: 'inherit',
+                mr: mini ? 0 : 1.5,
+              }}>
+                <DashboardIcon />
+              </ListItemIcon>
+              {mini && isFullyCollapsed ? (
+                <Typography variant="caption" sx={{
+                  position: 'absolute',
+                  bottom: -18,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 10,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: collapsedWidth - 28,
+                }}>
+                  Cluster
+                </Typography>
+              ) : null}
+            </Box>
+            {!mini && isFullyExpanded ? (
+              <ListItemText primary="Cluster" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
+            ) : null}
           </ListItemButton>
-          <ListItemButton disabled>
-            <ListItemIcon>
-              <StorageIcon />
-            </ListItemIcon>
-            <ListItemText primary="Namespaces" />
+          <ListItemButton
+            disabled
+            sx={{
+              height: mini ? 50 : 'auto',
+              py: mini ? 0 : 1.5,
+              px: 1,
+              position: 'relative',
+              borderRadius: 1,
+              transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
+            }}
+          >
+            <Box sx={mini ? {
+              position: 'absolute',
+              left: '50%',
+              top: 'calc(50% - 6px)',
+              transform: 'translate(-50%, -50%)',
+            } : {}}>
+              <ListItemIcon sx={{
+                minWidth: 0,
+                justifyContent: mini ? 'center' : 'flex-start',
+                color: 'inherit',
+                mr: mini ? 0 : 1.5,
+              }}>
+                <StorageIcon />
+              </ListItemIcon>
+              {mini && isFullyCollapsed ? (
+                <Typography variant="caption" sx={{
+                  position: 'absolute',
+                  bottom: -18,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 10,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: collapsedWidth - 28,
+                }}>
+                  Namespaces
+                </Typography>
+              ) : null}
+            </Box>
+            {!mini && isFullyExpanded ? (
+              <ListItemText primary="Namespaces" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
+            ) : null}
           </ListItemButton>
-          <ListItemButton disabled>
-            <ListItemIcon>
-              <TopicIcon />
-            </ListItemIcon>
-            <ListItemText primary="Topics" />
+          <ListItemButton
+            disabled
+            sx={{
+              height: mini ? 50 : 'auto',
+              py: mini ? 0 : 1.5,
+              px: 1,
+              position: 'relative',
+              borderRadius: 1,
+              transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
+            }}
+          >
+            <Box sx={mini ? {
+              position: 'absolute',
+              left: '50%',
+              top: 'calc(50% - 6px)',
+              transform: 'translate(-50%, -50%)',
+            } : {}}>
+              <ListItemIcon sx={{
+                minWidth: 0,
+                justifyContent: mini ? 'center' : 'flex-start',
+                color: 'inherit',
+                mr: mini ? 0 : 1.5,
+              }}>
+                <TopicIcon />
+              </ListItemIcon>
+              {mini && isFullyCollapsed ? (
+                <Typography variant="caption" sx={{
+                  position: 'absolute',
+                  bottom: -18,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 10,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: collapsedWidth - 28,
+                }}>
+                  Topics
+                </Typography>
+              ) : null}
+            </Box>
+            {!mini && isFullyExpanded ? (
+              <ListItemText primary="Topics" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
+            ) : null}
           </ListItemButton>
         </List>
       </Drawer>
