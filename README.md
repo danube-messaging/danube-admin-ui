@@ -12,23 +12,37 @@ This is the recommended way to run the application for testing or production use
 
 ### Build and Run
 
-1.  **Build the Docker Image:**
+1. **Build the Docker Image:**
     Open your terminal in the project's root directory and run the following command. This will build the container image and tag it as `danube-admin-ui`.
 
     ```bash
     docker build -t danube-admin-ui .
     ```
 
-2.  **Run the Container:**
+2. **Run the Container:**
     Once the build is complete, start the application with this command:
 
     ```bash
-    docker run -p 3000:80 danube-admin-ui
+    docker run -d -p 3000:80 danube-admin-ui
     ```
 
-The Danube Admin UI will now be accessible at **[http://localhost:3000](http://localhost:3000)**.
+    The Danube Admin UI will now be accessible at **[http://localhost:3000](http://localhost:3000)**.
 
-**Note:** The application expects the `danube-admin-gateway` service to be running and accessible. By default, it will try to connect to `http://localhost:8080`.
+    **Note:** The application expects the `danube-admin-gateway` service to be running and accessible. By default, it will try to connect to `http://localhost:8080`.
+
+3. **Remove the Container:**
+
+    Stop the container:
+
+    ```bash
+    docker stop danube-admin-ui
+    ```
+
+    Remove it (optional):
+
+    ```bash
+    docker rm danube-admin-ui
+    ```
 
 ## Development
 
@@ -41,18 +55,18 @@ If you want to contribute to the development of the UI, you can set up a local d
 
 ### Local Setup
 
-1.  **Install Dependencies:**
+1. **Install Dependencies:**
     Clone the repository and install the dependencies using `pnpm`.
 
     ```bash
     pnpm install
     ```
 
-2.  **Run the Development Server:**
+2. **Run the Development Server:**
     Start the Vite development server.
 
     ```bash
     pnpm dev
     ```
 
-The application will be available at **http://localhost:5173** and will automatically reload when you make changes to the code.
+The application will be available at **<http://localhost:5173>** and will automatically reload when you make changes to the code.
