@@ -3,7 +3,7 @@ import { Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Outlet } from 'react-router-dom';
 import { TopBar } from './TopBar';
-import { SideNav, collapsedWidth, expandedWidth } from './SideNav';
+import { SideNav } from './SideNav';
 
 export const AppLayout: React.FC = () => {
   const theme = useTheme();
@@ -22,7 +22,6 @@ export const AppLayout: React.FC = () => {
     }
   };
   const isNavigationExpanded = isOverMd ? desktopExpanded : true;
-  const sideWidth = useMemo(() => (isNavigationExpanded ? expandedWidth : collapsedWidth), [isNavigationExpanded]);
   const layoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
