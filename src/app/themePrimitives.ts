@@ -5,7 +5,7 @@ type PaletteMode = 'light' | 'dark';
 type Shadows = Theme['shadows'];
 
 declare module '@mui/material/styles' {
-  interface ColorRange {
+  interface PaletteColor {
     50: string;
     100: string;
     200: string;
@@ -17,8 +17,6 @@ declare module '@mui/material/styles' {
     800: string;
     900: string;
   }
-
-  interface PaletteColor extends ColorRange {}
 }
 
 const defaultTheme = createTheme();
