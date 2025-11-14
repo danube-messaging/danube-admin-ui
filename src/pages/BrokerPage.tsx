@@ -91,9 +91,9 @@ export const BrokerPage: React.FC = () => {
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
-                    Producers
+                    Inbound Bytes
                   </Typography>
-                  <Typography variant="h5">{metrics?.producers_connected}</Typography>
+                  <Typography variant="h5">{metrics?.inbound_bytes_total}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -101,9 +101,9 @@ export const BrokerPage: React.FC = () => {
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
-                    Consumers
+                    Outbound Bytes
                   </Typography>
-                  <Typography variant="h5">{metrics?.consumers_connected}</Typography>
+                  <Typography variant="h5">{metrics?.outbound_bytes_total}</Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -126,6 +126,7 @@ export const BrokerPage: React.FC = () => {
                 <TableRow>
                   <TableCell>Name</TableCell>
                   <TableCell>Producers</TableCell>
+                  <TableCell>Subscriptions</TableCell>
                   <TableCell>Consumers</TableCell>
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
@@ -140,6 +141,7 @@ export const BrokerPage: React.FC = () => {
                   >
                     <TableCell>{topic.name}</TableCell>
                     <TableCell>{topic.producers_connected}</TableCell>
+                    <TableCell>{topic.subscriptions}</TableCell>
                     <TableCell>{topic.consumers_connected}</TableCell>
                     <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                       <Tooltip title="Move to another broker">

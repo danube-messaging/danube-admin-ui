@@ -36,5 +36,7 @@ export const useTopicPage = (topicName: string | undefined) => {
       return fetcher<TopicPageData>(`/ui/v1/topics/${encodeURIComponent(topicName)}`);
     },
     enabled: !!topicName,
+    refetchInterval: 5000,
+    staleTime: 3000,
   });
 };
