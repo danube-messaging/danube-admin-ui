@@ -1,7 +1,6 @@
-import React from 'react';
 import { useThemeMode } from '../app/themeMode';
 import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectProps } from '@mui/material/Select';
+import Select, { type SelectProps, type SelectChangeEvent } from '@mui/material/Select';
 import { DarkMode, LightMode, SettingsBrightness } from '@mui/icons-material';
 import { Box } from '@mui/material';
 
@@ -24,7 +23,7 @@ export default function ColorModeSelect(props: SelectProps) {
   return (
     <Select
       value={mode}
-      onChange={(event) => setMode(event.target.value as 'system' | 'light' | 'dark')}
+      onChange={(event: SelectChangeEvent) => setMode(event.target.value as 'system' | 'light' | 'dark')}
       size="small"
       startAdornment={
         <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
