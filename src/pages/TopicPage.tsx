@@ -58,7 +58,7 @@ export const TopicPage: React.FC = () => {
           </Box>
 
           <Grid container spacing={3} mb={3}>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -68,7 +68,7 @@ export const TopicPage: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -78,7 +78,7 @@ export const TopicPage: React.FC = () => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary" gutterBottom>
@@ -91,7 +91,7 @@ export const TopicPage: React.FC = () => {
           </Grid>
 
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="h6" gutterBottom>
                 Schema
               </Typography>
@@ -104,7 +104,7 @@ export const TopicPage: React.FC = () => {
                   sx={{
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-all',
-                    backgroundColor: 'rgba(0,0,0,0.05)',
+                    bgcolor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
                     p: 2,
                     borderRadius: 1,
                   }}
@@ -113,7 +113,7 @@ export const TopicPage: React.FC = () => {
                 </Box>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="h6" gutterBottom>
                 Subscriptions
               </Typography>

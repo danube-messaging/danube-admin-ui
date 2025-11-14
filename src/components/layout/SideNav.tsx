@@ -84,8 +84,10 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
           [`& .MuiDrawer-paper`]: {
             width: 240,
             boxSizing: 'border-box',
-            bgcolor: (t) => (t.palette.mode === 'dark' ? '#071a36' : '#e2e8f0'),
-            color: (t) => (t.palette.mode === 'dark' ? '#e3f2fd' : t.palette.text.primary),
+            bgcolor: 'background.default',
+            color: 'text.primary',
+            borderRight: '1px solid',
+            borderColor: 'divider',
             transition: (t) => t.transitions.create('width', { duration: t.transitions.duration.standard }),
           },
         }}
@@ -101,8 +103,10 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
           [`& .MuiDrawer-paper`]: {
             width,
             boxSizing: 'border-box',
-            bgcolor: (t) => (t.palette.mode === 'dark' ? '#071a36' : '#e2e8f0'),
-            color: (t) => (t.palette.mode === 'dark' ? '#e3f2fd' : t.palette.text.primary),
+            bgcolor: 'background.default',
+            color: 'text.primary',
+            borderRight: '1px solid',
+            borderColor: 'divider',
             transition: (t) => t.transitions.create('width', { duration: t.transitions.duration.standard }),
           },
         }}
@@ -124,13 +128,14 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
               borderRadius: 1,
               transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
               '&:hover': {
-                backgroundColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)'
+                backgroundColor: 'action.hover'
               },
               '&.Mui-selected': {
-                backgroundColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
+                backgroundColor: 'action.selected',
+                color: 'primary.main'
               },
               '&.Mui-selected:hover': {
-                backgroundColor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)'
+                backgroundColor: 'action.selected'
               },
               '&.Mui-selected::before': {
                 content: '""',
