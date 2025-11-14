@@ -44,7 +44,7 @@ export const AppLayout: React.FC = () => {
           flexGrow: 1,
           p: 3,
           width: '100%',
-          backgroundColor: (t) => t.palette.background.default,
+          bgcolor: 'background.default',
           minHeight: '100vh',
         }}
       >
