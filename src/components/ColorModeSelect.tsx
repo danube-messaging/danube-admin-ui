@@ -25,7 +25,7 @@ export default function ColorModeSelect(props: SelectProps) {
     event:
       | ChangeEvent<HTMLInputElement>
       | (Event & { target: { value: string; name: string } }),
-    _child,
+    _child: ReactNode,
   ) => {
     const value = (event.target as { value: string }).value;
     setMode(value as 'system' | 'light' | 'dark');
