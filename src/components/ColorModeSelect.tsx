@@ -3,6 +3,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { type SelectProps } from '@mui/material/Select';
 import { DarkMode, LightMode, SettingsBrightness } from '@mui/icons-material';
 import { Box } from '@mui/material';
+import type { ChangeEvent, ReactNode } from 'react';
 
 export default function ColorModeSelect(props: SelectProps) {
   const { mode, setMode } = useThemeMode();
@@ -20,13 +21,20 @@ export default function ColorModeSelect(props: SelectProps) {
     }
   };
 
+  const handleChange: SelectProps['onChange'] = (
+    event:
+      | ChangeEvent<HTMLInputElement>
+      | (Event & { target: { value: string; name: string } }),
+    _child,
+  ) => {
+    const value = (event.target as { value: string }).value;
+    setMode(value as 'system' | 'light' | 'dark');
+  };
+
   return (
     <Select
       value={mode}
-      onChange={(event: any) => {
-        const value = (event.target as { value: string }).value;
-        setMode(value as 'system' | 'light' | 'dark');
-      }}
+      onChange={handleChange}
       size="small"
       startAdornment={
         <Box sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
