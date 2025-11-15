@@ -106,7 +106,7 @@ export const ClusterPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: (_params: GridRenderCellParams) => (
+                  renderCell: () => (
                     <Tooltip title="Move all topics from the broker">
                       <IconButton
                         size="small"

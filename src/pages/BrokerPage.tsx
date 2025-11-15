@@ -145,7 +145,7 @@ export const BrokerPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: (_params: GridRenderCellParams) => (
+                  renderCell: () => (
                     <Tooltip title="Move to another broker">
                       <IconButton size="small" aria-label="move topic" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                         <MoveIcon />
@@ -161,7 +161,7 @@ export const BrokerPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: (_params: GridRenderCellParams) => (
+                  renderCell: () => (
                     <Tooltip title="Delete topic">
                       <IconButton size="small" color="error" aria-label="delete topic" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                         <DeleteIcon />
