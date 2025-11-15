@@ -9,6 +9,9 @@ import {
   GridToolbarColumnsButton,
 } from '@mui/x-data-grid';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
+import CheckIcon from '@mui/icons-material/Check';
+import CachedIcon from '@mui/icons-material/Cached';
+import WarningIcon from '@mui/icons-material/Warning';
 import { useNavigate } from 'react-router-dom';
 import { useClusterPage } from '../features/cluster/api';
 import { KpiCard } from '../components/common/KpiCard';
@@ -74,6 +77,7 @@ export const ClusterPage: React.FC = () => {
             <DataGrid
               rows={(brokers || []).map((b) => ({
                 id: b.broker_id,
+                status: b.broker_status,
                 address: b.broker_addr,
                 role: b.broker_role,
                 topics: b.stats.topics_owned,
@@ -81,7 +85,48 @@ export const ClusterPage: React.FC = () => {
               }))}
               columns={([
                 { field: 'id', headerName: 'ID', flex: 1, minWidth: 220 },
-                { field: 'address', headerName: 'Address', flex: 1, minWidth: 200 },
+                {
+                  field: 'status',
+                  headerName: 'Status',
+                  width: 140,
+                  renderCell: (params) => {
+                    const v = String(params.value || '').toLowerCase();
+                    if (v === 'active') {
+                      return (
+                        <Chip
+                          icon={<CheckIcon fontSize="small" />}
+                          label="Active"
+                          color="success"
+                          size="small"
+                          variant="filled"
+                          sx={{ borderRadius: 2, fontWeight: 600 }}
+                        />
+                      );
+                    }
+                    if (v === 'draining') {
+                      return (
+                        <Chip
+                          icon={<CachedIcon fontSize="small" />}
+                          label="Draining"
+                          color="warning"
+                          size="small"
+                          variant="filled"
+                          sx={{ borderRadius: 2, fontWeight: 600 }}
+                        />
+                      );
+                    }
+                    return (
+                      <Chip
+                        icon={<WarningIcon fontSize="small" />}
+                        label="Drained"
+                        color="error"
+                        size="small"
+                        variant="filled"
+                        sx={{ borderRadius: 2, fontWeight: 600 }}
+                      />
+                    );
+                  },
+                },
                 {
                   field: 'role',
                   headerName: 'Role',
@@ -95,6 +140,7 @@ export const ClusterPage: React.FC = () => {
                     />
                   ),
                 },
+                { field: 'address', headerName: 'Address', flex: 1, minWidth: 200 },
                 { field: 'topics', headerName: 'Topics', width: 120, type: 'number' },
                 { field: 'rpcs', headerName: 'RPCs', width: 120, type: 'number' },
                 {

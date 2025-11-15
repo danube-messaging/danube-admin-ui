@@ -3,6 +3,7 @@ import { AppLayout } from '../components/layout/AppLayout';
 import { ClusterPage } from '../pages/ClusterPage';
 import { BrokerPage } from '../pages/BrokerPage';
 import { TopicPage } from '../pages/TopicPage';
+import { TopicListPage } from '../pages/TopicListPage';
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path: 'topics/:topic',
         element: <TopicPage />,
+      },
+      {
+        path: 'topics',
+        element: <TopicListPage />,
       },
     ],
   },
