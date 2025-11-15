@@ -3,7 +3,6 @@ import { Alert, Box, Grid, LinearProgress, Typography, Chip, IconButton, Tooltip
 import {
   DataGrid,
   type GridColDef,
-  type GridRenderCellParams,
   type GridRowParams,
   GridToolbarContainer,
   GridToolbarQuickFilter,
@@ -87,9 +86,9 @@ export const ClusterPage: React.FC = () => {
                   field: 'role',
                   headerName: 'Role',
                   width: 160,
-                  renderCell: (params: GridRenderCellParams<string>) => (
+                  renderCell: (params) => (
                     <Chip
-                      label={(params.value || '').replace('_', ' ')}
+                      label={(String(params.value) || '').replace('_', ' ')}
                       size="small"
                       color={params.value === 'Cluster_Leader' ? 'primary' : 'default'}
                       variant={params.value === 'Cluster_Leader' ? 'filled' : 'outlined'}
