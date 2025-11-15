@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import { Box, Chip, Grid, Paper, Typography } from '@mui/material';
 import { KpiCard } from '../../components/common/KpiCard';
+import type { ReliableMetricsDto } from './TopicReliable';
 
 export type TopicMetricsDto = {
   core: { msg_in_total: number; msg_out_total: number; bytes_in_total: number; bytes_out_total: number };
   active: { producers: number; consumers: number; subscriptions: number };
   quality: { send_error_total: number };
   latency_size: { msg_size_bytes_avg: number; send_latency_ms_p95: number };
-  reliable?: any | null;
+  reliable?: ReliableMetricsDto | null;
 };
 
 export type TopicDto = {

@@ -16,14 +16,17 @@ import {
 import { useParams } from 'react-router-dom';
 import { useTopicPage } from '../features/topic/api';
 import { TopicKpis, TopicSchemaAndSubscriptions } from './topic/TopicSections';
+import type { TopicDto, TopicMetricsDto } from './topic/TopicSections';
 import { TopicCharts } from './topic/TopicCharts';
+import type { SeriesItem } from './topic/TopicCharts';
 import { TopicReliable } from './topic/TopicReliable';
+import type { ReliableMetricsDto } from './topic/TopicReliable';
 import { StatCard } from '../components/common/StatCard';
 
 export const TopicPage: React.FC = () => {
   const { topic: topicName } = useParams<{ topic: string }>();
   const { data, isLoading, error } = useTopicPage(topicName);
-  const [series, setSeries] = useState<{ name: string; labels?: Record<string, string> | null; points: [number, number][] }[] | null>(null);
+  const [series, setSeries] = useState<SeriesItem[] | null>(null);
   const [seriesError, setSeriesError] = useState<string | null>(null);
   const [range, setRange] = useState<{ from: number; to: number; step: string }>(() => {
     const to = Math.floor(Date.now() / 1000);
@@ -34,7 +37,9 @@ export const TopicPage: React.FC = () => {
   useEffect(() => {
     if (!topicName) return;
     const controller = new AbortController();
-    const apiBase = (import.meta as any).env?.VITE_ADMIN_API_BASE ?? 'http://localhost:8080';
+    const apiBase = (
+      (import.meta as unknown as { env?: Record<string, string | undefined> }).env?.VITE_ADMIN_API_BASE
+    ) || 'http://localhost:8080';
     const url = `${apiBase}/ui/v1/topics/${encodeURIComponent(topicName)}/series?from=${range.from}&to=${range.to}&step=${range.step}`;
     setSeriesError(null);
     fetch(url, { signal: controller.signal })
@@ -54,7 +59,7 @@ export const TopicPage: React.FC = () => {
     return <Alert severity="error">Failed to load topic data: {error.message}</Alert>;
   }
 
-  const { topic, metrics, errors } = data || {};
+  const { topic, metrics, errors } = (data || {}) as { topic?: TopicDto; metrics?: TopicMetricsDto & { reliable?: ReliableMetricsDto | null }; errors?: string[] };
 
   return (
     <Box>
@@ -78,7 +83,7 @@ export const TopicPage: React.FC = () => {
                   exclusive
                   size="small"
                   value={range.to - range.from}
-                  onChange={(_e, val) => {
+                  onChange={(_e: React.MouseEvent<HTMLElement>, val: number | null) => {
                     if (!val) return;
                     const now = Math.floor(Date.now() / 1000);
                     setRange({ from: now - val, to: now, step: range.step });
@@ -94,7 +99,9 @@ export const TopicPage: React.FC = () => {
                     labelId="step-label"
                     label="Step"
                     value={range.step}
-                    onChange={(e) => setRange((r) => ({ ...r, step: e.target.value }))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setRange((r: { from: number; to: number; step: string }) => ({ ...r, step: (e.target as HTMLInputElement).value }))
+                    }
                   >
                     <MenuItem value={'15s'}>15s</MenuItem>
                     <MenuItem value={'30s'}>30s</MenuItem>
@@ -105,9 +112,9 @@ export const TopicPage: React.FC = () => {
             </Stack>
           </Box>
 
-          <TopicKpis metrics={metrics as any} />
+          <TopicKpis metrics={metrics} />
 
-          <TopicSchemaAndSubscriptions topic={topic as any} />
+          <TopicSchemaAndSubscriptions topic={topic} />
 
           {/* Sample StatCard using bytes_out_rate_1m */}
           <Grid container spacing={3} mb={2}>
@@ -115,12 +122,12 @@ export const TopicPage: React.FC = () => {
               <StatCard
                 title="Bytes Out Rate (1m)"
                 value={(() => {
-                  const pts = series?.find((s) => s.name === 'bytes_out_rate_1m')?.points || [];
+                  const pts = series?.find((s: SeriesItem) => s.name === 'bytes_out_rate_1m')?.points || [];
                   const v = pts.length ? pts[pts.length - 1][1] : 0;
                   return (Number.isFinite(v) ? v : 0).toFixed(2);
                 })()}
                 interval={`Last ${Math.floor((range.to - range.from) / 60)}m`}
-                data={(series?.find((s) => s.name === 'bytes_out_rate_1m')?.points || []).map((p) => p[1])}
+                data={(series?.find((s: SeriesItem) => s.name === 'bytes_out_rate_1m')?.points || []).map((p: [number, number]) => p[1])}
                 compact
               />
             </Grid>
@@ -130,7 +137,7 @@ export const TopicPage: React.FC = () => {
           <TopicCharts series={series} error={seriesError} />
 
           {/* Reliable section */}
-          {metrics?.reliable && <TopicReliable reliable={metrics.reliable as any} />}
+          {metrics?.reliable && <TopicReliable reliable={metrics.reliable as ReliableMetricsDto} />}
         </>
       )}
     </Box>
