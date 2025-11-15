@@ -141,7 +141,7 @@ export const BrokerPage: React.FC = () => {
                   >
                     <TableCell>{topic.name}</TableCell>
                     <TableCell>{topic.producers_connected}</TableCell>
-                    <TableCell>{topic.subscriptions}</TableCell>
+                    <TableCell>-</TableCell>
                     <TableCell>{topic.consumers_connected}</TableCell>
                     <TableCell align="right" onClick={(e) => e.stopPropagation()}>
                       <Tooltip title="Move to another broker">

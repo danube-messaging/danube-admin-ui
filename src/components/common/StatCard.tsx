@@ -78,7 +78,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           </Stack>
           <Box sx={{ width: '100%', height: chartHeight }}>
             <SparkLineChart
-              color={chartColor}
+              colors={[chartColor]}
               data={data}
               area
               showHighlight

@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import { useTopicPage } from '../features/topic/api';
 import { TopicKpis, TopicSchemaAndSubscriptions } from './topic/TopicSections';
 import type { TopicDto, TopicMetricsDto } from './topic/TopicSections';
@@ -99,8 +100,8 @@ export const TopicPage: React.FC = () => {
                     labelId="step-label"
                     label="Step"
                     value={range.step}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setRange((r: { from: number; to: number; step: string }) => ({ ...r, step: (e.target as HTMLInputElement).value }))
+                    onChange={(e: SelectChangeEvent<string>) =>
+                      setRange((r: { from: number; to: number; step: string }) => ({ ...r, step: e.target.value as string }))
                     }
                   >
                     <MenuItem value={'15s'}>15s</MenuItem>
