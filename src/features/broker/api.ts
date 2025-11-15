@@ -22,6 +22,7 @@ export interface BrokerTopic {
   name: string;
   producers_connected: number;
   consumers_connected: number;
+  subscriptions: number;
 }
 
 export interface BrokerPageData {
