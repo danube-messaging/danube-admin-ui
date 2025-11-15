@@ -6,18 +6,20 @@ import {
   CardContent,
   Grid,
   LinearProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   Button,
   IconButton,
   Tooltip,
 } from '@mui/material';
+import {
+  DataGrid,
+  type GridColDef,
+  type GridRenderCellParams,
+  type GridRowParams,
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
+  GridToolbarColumnsButton,
+} from '@mui/x-data-grid';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBrokerPage } from '../features/broker/api';
 import AddIcon from '@mui/icons-material/AddOutlined';
@@ -39,6 +41,13 @@ export const BrokerPage: React.FC = () => {
 
   const { broker, metrics, topics, errors } = data || {};
 
+  const QuickToolbar = () => (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarQuickFilter debounceMs={300} />
+    </GridToolbarContainer>
+  );
+
   const handleTopicClick = (topicName: string) => {
     navigate(`/topics/${encodeURIComponent(topicName)}`);
   };
@@ -47,7 +56,7 @@ export const BrokerPage: React.FC = () => {
     <Box>
       {errors && errors.length > 0 && (
         <Box mb={2}>
-          {errors.map((e, i) => (
+          {errors.map((e: string, i: number) => (
             <Alert severity="warning" key={i}>
               {e}
             </Alert>
@@ -120,46 +129,78 @@ export const BrokerPage: React.FC = () => {
               Create
             </Button>
           </Box>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Producers</TableCell>
-                  <TableCell>Subscriptions</TableCell>
-                  <TableCell>Consumers</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {topics?.map((topic) => (
-                  <TableRow
-                    key={topic.name}
-                    hover
-                    onClick={() => handleTopicClick(topic.name)}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell>{topic.name}</TableCell>
-                    <TableCell>{topic.producers_connected}</TableCell>
-                    <TableCell>-</TableCell>
-                    <TableCell>{topic.consumers_connected}</TableCell>
-                    <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                      <Tooltip title="Move to another broker">
-                        <IconButton size="small" aria-label="move topic">
-                          <MoveIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete topic">
-                        <IconButton size="small" color="error" aria-label="delete topic">
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box sx={{ width: '100%' }}>
+            <DataGrid
+              rows={(topics || []).map((t) => ({ id: t.name, name: t.name, producers: t.producers_connected, consumers: t.consumers_connected, subscriptions: t.subscriptions }))}
+              columns={([
+                { field: 'name', headerName: 'Name', flex: 1, minWidth: 220 },
+                { field: 'producers', headerName: 'Producers', width: 130, type: 'number' },
+                { field: 'subscriptions', headerName: 'Subscriptions', width: 150, type: 'number' },
+                { field: 'consumers', headerName: 'Consumers', width: 130, type: 'number' },
+                {
+                  field: 'move',
+                  headerName: 'Move',
+                  width: 80,
+                  sortable: false,
+                  filterable: false,
+                  align: 'right',
+                  headerAlign: 'right',
+                  renderCell: (_params: GridRenderCellParams) => (
+                    <Tooltip title="Move to another broker">
+                      <IconButton size="small" aria-label="move topic" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                        <MoveIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ),
+                },
+                {
+                  field: 'delete',
+                  headerName: 'Delete',
+                  width: 90,
+                  sortable: false,
+                  filterable: false,
+                  align: 'right',
+                  headerAlign: 'right',
+                  renderCell: (_params: GridRenderCellParams) => (
+                    <Tooltip title="Delete topic">
+                      <IconButton size="small" color="error" aria-label="delete topic" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  ),
+                },
+              ]) as GridColDef[]}
+              disableRowSelectionOnClick
+              onRowClick={(params: GridRowParams) => handleTopicClick(String(params.id))}
+              initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}
+              pageSizeOptions={[10, 25, 50]}
+              slots={{ toolbar: QuickToolbar }}
+              autoHeight
+              sx={{
+                '& .MuiDataGrid-columnHeaders': {
+                  fontWeight: 600,
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                  backgroundColor: 'background.paper',
+                  color: 'text.secondary',
+                },
+                '& .MuiDataGrid-footerContainer': {
+                  borderTop: '1px solid',
+                  borderColor: 'divider',
+                  backgroundColor: 'background.paper',
+                  color: 'text.secondary',
+                },
+                '& .MuiDataGrid-toolbarContainer': {
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                  backgroundColor: 'background.paper',
+                },
+                borderColor: 'divider',
+                '& .MuiDataGrid-row': { borderColor: 'divider' },
+                '& .MuiDataGrid-cell': { borderColor: 'divider' },
+              }}
+            />
+          </Box>
         </>
       )}
     </Box>
