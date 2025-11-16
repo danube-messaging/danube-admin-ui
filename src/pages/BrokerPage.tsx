@@ -10,7 +10,7 @@ import {
   Tooltip,
   Fab,
 } from '@mui/material';
-import { DataGrid, type GridColDef, type GridRowParams, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef, type GridRowParams, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton, type GridRenderCellParams } from '@mui/x-data-grid';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBrokerPage } from '../features/broker/api';
 import AddIcon from '@mui/icons-material/AddOutlined';
@@ -33,6 +33,7 @@ export const BrokerPage: React.FC = () => {
   }
 
   const { broker, metrics, topics, errors } = data || {};
+  type BrokerTopicRow = { id: string; name: string; producers: number; consumers: number; subscriptions: number };
 
   const QuickToolbar = () => (
     <GridToolbarContainer>
@@ -119,7 +120,7 @@ export const BrokerPage: React.FC = () => {
             </Fab>
           </Box>
           <Box sx={{ width: '100%' }}>
-            <DataGrid
+            <DataGrid<BrokerTopicRow>
               rows={(topics || []).map((t) => ({ id: t.name, name: t.name, producers: t.producers_connected, consumers: t.consumers_connected, subscriptions: t.subscriptions }))}
               columns={([
                 { field: 'name', headerName: 'Name', flex: 1, minWidth: 220 },
@@ -134,7 +135,7 @@ export const BrokerPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: (params) => (
+                  renderCell: (params: GridRenderCellParams<BrokerTopicRow>) => (
                     <Tooltip title="Move to another broker">
                       <Fab
                         size="small"
@@ -142,7 +143,7 @@ export const BrokerPage: React.FC = () => {
                         aria-label="move topic"
                         onClick={(e: React.MouseEvent) => {
                           e.stopPropagation();
-                          openUnloadDialog(String((params.row as any).name));
+                          openUnloadDialog(String(params.row.name));
                         }}
                       >
                         <MoveIcon fontSize="small" />
@@ -158,7 +159,7 @@ export const BrokerPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: (params) => (
+                  renderCell: (params: GridRenderCellParams<BrokerTopicRow>) => (
                     <Tooltip title="Delete topic">
                       <Fab
                         size="small"
@@ -166,7 +167,7 @@ export const BrokerPage: React.FC = () => {
                         aria-label="delete topic"
                         onClick={(e: React.MouseEvent) => {
                           e.stopPropagation();
-                          openDeleteDialog(String((params.row as any).name));
+                          openDeleteDialog(String(params.row.name));
                         }}
                       >
                         <DeleteIcon fontSize="small" />
@@ -174,9 +175,9 @@ export const BrokerPage: React.FC = () => {
                     </Tooltip>
                   ),
                 },
-              ]) as GridColDef[]}
+              ]) as GridColDef<BrokerTopicRow>[]}
               disableRowSelectionOnClick
-              onRowClick={(params: GridRowParams) => handleTopicClick(String(params.id))}
+              onRowClick={(params: GridRowParams<BrokerTopicRow>) => handleTopicClick(String(params.id))}
               initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}
               pageSizeOptions={[10, 25, 50]}
               slots={{ toolbar: QuickToolbar }}

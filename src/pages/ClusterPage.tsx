@@ -7,6 +7,7 @@ import {
   GridToolbarContainer,
   GridToolbarQuickFilter,
   GridToolbarColumnsButton,
+  type GridRenderCellParams,
 } from '@mui/x-data-grid';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
 import CheckIcon from '@mui/icons-material/Check';
@@ -35,6 +36,8 @@ export const ClusterPage: React.FC = () => {
   const handleBrokerClick = (id: string) => {
     navigate(`/brokers/${id}`);
   };
+
+  type BrokerRow = { id: string; status: string; address: string; role: string; topics: number; rpcs: number };
 
   return (
     <Box>
@@ -76,7 +79,7 @@ export const ClusterPage: React.FC = () => {
             Brokers
           </Typography>
           <Box sx={{ width: '100%' }}>
-            <DataGrid
+            <DataGrid<BrokerRow>
               rows={(brokers || []).map((b) => ({
                 id: b.broker_id,
                 status: b.broker_status,
@@ -91,8 +94,8 @@ export const ClusterPage: React.FC = () => {
                   field: 'status',
                   headerName: 'Status',
                   width: 140,
-                  renderCell: (params) => {
-                    const v = String(params.value || '').toLowerCase();
+                  renderCell: (params: GridRenderCellParams<BrokerRow, string>) => {
+                    const v = String(params.value ?? '').toLowerCase();
                     if (v === 'active') {
                       return (
                         <Chip
@@ -133,7 +136,7 @@ export const ClusterPage: React.FC = () => {
                   field: 'role',
                   headerName: 'Role',
                   width: 160,
-                  renderCell: (params) => (
+                  renderCell: (params: GridRenderCellParams<BrokerRow, string>) => (
                     <Chip
                       label={(String(params.value) || '').replace('_', ' ')}
                       size="small"
@@ -153,8 +156,8 @@ export const ClusterPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: (params) => {
-                    const status = String((params.row as any)?.status || '').toLowerCase();
+                  renderCell: (params: GridRenderCellParams<BrokerRow>) => {
+                    const status = String(params.row.status || '').toLowerCase();
                     if (status === 'drained') {
                       return (
                         <Tooltip title="Activate broker">
@@ -189,9 +192,9 @@ export const ClusterPage: React.FC = () => {
                     );
                   },
                 },
-              ]) as GridColDef[]}
+              ]) as GridColDef<BrokerRow>[]}
               disableRowSelectionOnClick
-              onRowClick={(params: GridRowParams) => handleBrokerClick(String(params.id))}
+              onRowClick={(params: GridRowParams<BrokerRow>) => handleBrokerClick(String(params.id))}
               initialState={{ pagination: { paginationModel: { pageSize: 10, page: 0 } } }}
               pageSizeOptions={[10, 25, 50]}
               autoHeight

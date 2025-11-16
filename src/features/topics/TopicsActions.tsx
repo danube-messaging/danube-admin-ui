@@ -15,13 +15,14 @@ import { postJson } from '../../lib/api';
 import { useQueryClient } from '@tanstack/react-query';
 
 export interface UseTopicActionsOptions {
-  invalidateKeys?: Array<unknown>;
+  invalidateKeys?: Array<readonly unknown[]>;
 }
 
 export const useTopicActions = (options?: UseTopicActionsOptions) => {
   const queryClient = useQueryClient();
 
-  const [snackbar, setSnackbar] = React.useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+  type SnackbarState = { open: boolean; message: string; severity: 'success' | 'error' };
+  const [snackbar, setSnackbar] = React.useState<SnackbarState>({
     open: false,
     message: '',
     severity: 'success',
@@ -55,8 +56,8 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ['topicsList'] });
-    for (const k of options?.invalidateKeys || []) {
-      await queryClient.invalidateQueries({ queryKey: k as any });
+    for (const k of (options?.invalidateKeys || [])) {
+      await queryClient.invalidateQueries({ queryKey: k });
     }
   };
 
@@ -68,14 +69,14 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           <TextField
             label="Topic"
             value={form.topic}
-            onChange={(e) => setForm((s: TopicForm) => ({ ...s, topic: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, topic: e.target.value }))}
             helperText="Use '/namespace/topic' or provide Namespace below"
             fullWidth
           />
           <TextField
             label="Namespace (optional)"
             value={form.namespace}
-            onChange={(e) => setForm((s: TopicForm) => ({ ...s, namespace: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, namespace: e.target.value }))}
             fullWidth
           />
           <TextField
@@ -83,14 +84,14 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             type="number"
             inputProps={{ min: 0 }}
             value={form.partitions}
-            onChange={(e) => setForm((s: TopicForm) => ({ ...s, partitions: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, partitions: e.target.value }))}
             fullWidth
           />
           <TextField
             select
             label="Dispatch Strategy"
             value={form.dispatch_strategy}
-            onChange={(e) => setForm((s: TopicForm) => ({ ...s, dispatch_strategy: e.target.value as TopicForm['dispatch_strategy'] }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, dispatch_strategy: e.target.value as TopicForm['dispatch_strategy'] }))}
             fullWidth
           >
             <MenuItem value="non_reliable">non_reliable</MenuItem>
@@ -100,7 +101,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             select
             label="Schema Type"
             value={form.schema_type}
-            onChange={(e) => setForm((s: TopicForm) => ({ ...s, schema_type: e.target.value as TopicForm['schema_type'] }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, schema_type: e.target.value as TopicForm['schema_type'] }))}
             fullWidth
           >
             <MenuItem value="String">String</MenuItem>
@@ -111,7 +112,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           <TextField
             label="Schema Data (JSON)"
             value={form.schema_data}
-            onChange={(e) => setForm((s: TopicForm) => ({ ...s, schema_data: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((s: TopicForm) => ({ ...s, schema_data: e.target.value }))}
             fullWidth
             multiline
             minRows={2}
@@ -163,7 +164,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             <TextField
               label="Namespace"
               value={form._tmpUnloadNs || ''}
-              onChange={(e) => setForm((s: TopicForm) => ({ ...s, _tmpUnloadNs: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, _tmpUnloadNs: e.target.value }))}
               fullWidth
             />
           )}
@@ -212,7 +213,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             <TextField
               label="Namespace"
               value={form._tmpDeleteNs || ''}
-              onChange={(e) => setForm((s: TopicForm) => ({ ...s, _tmpDeleteNs: e.target.value }))}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: TopicForm) => ({ ...s, _tmpDeleteNs: e.target.value }))}
               fullWidth
             />
           )}
@@ -258,7 +259,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
-        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        onClose={() => setSnackbar((prev: SnackbarState) => ({ ...prev, open: false }))}
         message={snackbar.message}
       />
     </>

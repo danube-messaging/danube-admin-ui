@@ -4,7 +4,7 @@ import { postJson } from '../../lib/api';
 import { useQueryClient } from '@tanstack/react-query';
 
 export interface UseClusterActionsOptions {
-  invalidateKeys?: Array<unknown>;
+  invalidateKeys?: Array<readonly unknown[]>;
 }
 
 type UnloadForm = {
@@ -42,7 +42,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ['clusterPage'] });
     for (const k of options?.invalidateKeys || []) {
-      await queryClient.invalidateQueries({ queryKey: k as any });
+      await queryClient.invalidateQueries({ queryKey: k });
     }
   };
 
@@ -110,8 +110,9 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
               setSnackbar({ open: true, message: resp.message || 'Unload started', severity: 'success' });
               setOpenUnload(null);
               await invalidate();
-            } catch (err: any) {
-              setSnackbar({ open: true, message: err?.message || 'Failed to unload broker', severity: 'error' });
+            } catch (err: unknown) {
+              const msg = err instanceof Error ? err.message : 'Failed to unload broker';
+              setSnackbar({ open: true, message: msg, severity: 'error' });
             }
           }}
         >
@@ -148,8 +149,9 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
               setSnackbar({ open: true, message: resp.message || 'Broker activated', severity: 'success' });
               setOpenActivate(null);
               await invalidate();
-            } catch (err: any) {
-              setSnackbar({ open: true, message: err?.message || 'Failed to activate broker', severity: 'error' });
+            } catch (err: unknown) {
+              const msg = err instanceof Error ? err.message : 'Failed to activate broker';
+              setSnackbar({ open: true, message: msg, severity: 'error' });
             }
           }}
         >
