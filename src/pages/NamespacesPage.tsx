@@ -31,7 +31,7 @@ export const NamespacesPage: React.FC = () => {
           </TreeItem>
         </SimpleTreeView>
       );
-    } catch (_) {
+    } catch {
       return <Typography color="error">Invalid policies JSON</Typography>;
     }
   };
