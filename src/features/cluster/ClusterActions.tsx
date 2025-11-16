@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, Button, Snackbar, Typography, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, Button, Snackbar, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { postJson } from '../../lib/api';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -7,10 +7,21 @@ export interface UseClusterActionsOptions {
   invalidateKeys?: Array<unknown>;
 }
 
+type UnloadForm = {
+  max_parallel: string;
+  namespaces_include: string;
+  namespaces_exclude: string;
+  dry_run: boolean;
+  timeout_seconds: string;
+  reason: string;
+};
+
+type SnackbarState = { open: boolean; message: string; severity: 'success' | 'error' };
+
 export const useClusterActions = (options?: UseClusterActionsOptions) => {
   const queryClient = useQueryClient();
 
-  const [snackbar, setSnackbar] = React.useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+  const [snackbar, setSnackbar] = React.useState<SnackbarState>({
     open: false,
     message: '',
     severity: 'success',
@@ -19,7 +30,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
   const [openUnload, setOpenUnload] = React.useState<{ open: boolean; broker_id: string } | null>(null);
   const [openActivate, setOpenActivate] = React.useState<{ open: boolean; broker_id: string } | null>(null);
 
-  const [form, setForm] = React.useState<any>({
+  const [form, setForm] = React.useState<UnloadForm>({
     max_parallel: '',
     namespaces_include: '',
     namespaces_exclude: '',
@@ -47,23 +58,23 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
             type="number"
             inputProps={{ min: 1 }}
             value={form.max_parallel}
-            onChange={(e) => setForm((s: any) => ({ ...s, max_parallel: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: UnloadForm) => ({ ...s, max_parallel: e.target.value }))}
             fullWidth
           />
           <TextField
             label="Namespaces Include (comma separated)"
             value={form.namespaces_include}
-            onChange={(e) => setForm((s: any) => ({ ...s, namespaces_include: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: UnloadForm) => ({ ...s, namespaces_include: e.target.value }))}
             fullWidth
           />
           <TextField
             label="Namespaces Exclude (comma separated)"
             value={form.namespaces_exclude}
-            onChange={(e) => setForm((s: any) => ({ ...s, namespaces_exclude: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: UnloadForm) => ({ ...s, namespaces_exclude: e.target.value }))}
             fullWidth
           />
           <FormControlLabel
-            control={<Checkbox checked={!!form.dry_run} onChange={(e) => setForm((s: any) => ({ ...s, dry_run: e.target.checked }))} />}
+            control={<Checkbox checked={!!form.dry_run} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: UnloadForm) => ({ ...s, dry_run: e.target.checked }))} />}
             label="Dry Run"
           />
           <TextField
@@ -71,7 +82,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
             type="number"
             inputProps={{ min: 1 }}
             value={form.timeout_seconds}
-            onChange={(e) => setForm((s: any) => ({ ...s, timeout_seconds: e.target.value }))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: UnloadForm) => ({ ...s, timeout_seconds: e.target.value }))}
             fullWidth
           />
         </Stack>
@@ -83,7 +94,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
           color="warning"
           onClick={async () => {
             try {
-              const body: any = {
+              const body: { action: 'unload'; broker_id?: string; max_parallel?: number; namespaces_include?: string[]; namespaces_exclude?: string[]; dry_run?: boolean; timeout_seconds?: number } = {
                 action: 'unload',
                 broker_id: openUnload?.broker_id,
               };
@@ -116,7 +127,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
       <DialogContent>
         <Stack spacing={2} mt={1}>
           <TextField label="Broker ID" value={openActivate?.broker_id || ''} InputProps={{ readOnly: true }} fullWidth />
-          <TextField label="Reason" value={form.reason} onChange={(e) => setForm((s: any) => ({ ...s, reason: e.target.value }))} fullWidth />
+          <TextField label="Reason" value={form.reason} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm((s: UnloadForm) => ({ ...s, reason: e.target.value }))} fullWidth />
         </Stack>
       </DialogContent>
       <DialogActions>
@@ -125,7 +136,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
           variant="contained"
           onClick={async () => {
             try {
-              const body: any = {
+              const body: { action: 'activate'; broker_id?: string; reason: string } = {
                 action: 'activate',
                 broker_id: openActivate?.broker_id,
                 reason: form.reason || 'admin_activate',
@@ -155,7 +166,7 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
-        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        onClose={() => setSnackbar((prev: SnackbarState) => ({ ...prev, open: false }))}
         message={snackbar.message}
       />
     </>

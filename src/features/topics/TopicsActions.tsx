@@ -31,7 +31,18 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
   const [openUnload, setOpenUnload] = React.useState<{ open: boolean; topic: string } | null>(null);
   const [openDelete, setOpenDelete] = React.useState<{ open: boolean; topic: string } | null>(null);
 
-  const [form, setForm] = React.useState<any>({
+  type TopicForm = {
+    topic: string;
+    namespace: string;
+    partitions: string;
+    schema_type: 'String' | 'Bytes' | 'Int64' | 'Json';
+    schema_data: string;
+    dispatch_strategy: 'non_reliable' | 'reliable';
+    _tmpUnloadNs: string;
+    _tmpDeleteNs: string;
+  };
+
+  const [form, setForm] = React.useState<TopicForm>({
     topic: '',
     namespace: '',
     partitions: '',
@@ -57,14 +68,14 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           <TextField
             label="Topic"
             value={form.topic}
-            onChange={(e) => setForm((s: any) => ({ ...s, topic: e.target.value }))}
+            onChange={(e) => setForm((s: TopicForm) => ({ ...s, topic: e.target.value }))}
             helperText="Use '/namespace/topic' or provide Namespace below"
             fullWidth
           />
           <TextField
             label="Namespace (optional)"
             value={form.namespace}
-            onChange={(e) => setForm((s: any) => ({ ...s, namespace: e.target.value }))}
+            onChange={(e) => setForm((s: TopicForm) => ({ ...s, namespace: e.target.value }))}
             fullWidth
           />
           <TextField
@@ -72,14 +83,14 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             type="number"
             inputProps={{ min: 0 }}
             value={form.partitions}
-            onChange={(e) => setForm((s: any) => ({ ...s, partitions: e.target.value }))}
+            onChange={(e) => setForm((s: TopicForm) => ({ ...s, partitions: e.target.value }))}
             fullWidth
           />
           <TextField
             select
             label="Dispatch Strategy"
             value={form.dispatch_strategy}
-            onChange={(e) => setForm((s: any) => ({ ...s, dispatch_strategy: e.target.value }))}
+            onChange={(e) => setForm((s: TopicForm) => ({ ...s, dispatch_strategy: e.target.value as TopicForm['dispatch_strategy'] }))}
             fullWidth
           >
             <MenuItem value="non_reliable">non_reliable</MenuItem>
@@ -89,7 +100,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             select
             label="Schema Type"
             value={form.schema_type}
-            onChange={(e) => setForm((s: any) => ({ ...s, schema_type: e.target.value }))}
+            onChange={(e) => setForm((s: TopicForm) => ({ ...s, schema_type: e.target.value as TopicForm['schema_type'] }))}
             fullWidth
           >
             <MenuItem value="String">String</MenuItem>
@@ -100,7 +111,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           <TextField
             label="Schema Data (JSON)"
             value={form.schema_data}
-            onChange={(e) => setForm((s: any) => ({ ...s, schema_data: e.target.value }))}
+            onChange={(e) => setForm((s: TopicForm) => ({ ...s, schema_data: e.target.value }))}
             fullWidth
             multiline
             minRows={2}
@@ -113,7 +124,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           variant="contained"
           onClick={async () => {
             try {
-              const body: any = {
+              const body: { action: 'create'; topic: string; namespace?: string; partitions?: number; schema_type: TopicForm['schema_type']; schema_data?: string; dispatch_strategy: TopicForm['dispatch_strategy'] } = {
                 action: 'create',
                 topic: form.topic,
                 schema_type: form.schema_type,
@@ -129,8 +140,9 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
               setSnackbar({ open: true, message: resp.message || 'Created', severity: 'success' });
               setOpenCreate(false);
               await invalidate();
-            } catch (err: any) {
-              setSnackbar({ open: true, message: err?.message || 'Failed to create topic', severity: 'error' });
+            } catch (err: unknown) {
+              const msg = err instanceof Error ? err.message : 'Failed to create topic';
+              setSnackbar({ open: true, message: msg, severity: 'error' });
             }
           }}
         >
@@ -151,7 +163,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             <TextField
               label="Namespace"
               value={form._tmpUnloadNs || ''}
-              onChange={(e) => setForm((s: any) => ({ ...s, _tmpUnloadNs: e.target.value }))}
+              onChange={(e) => setForm((s: TopicForm) => ({ ...s, _tmpUnloadNs: e.target.value }))}
               fullWidth
             />
           )}
@@ -165,7 +177,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           onClick={async () => {
             try {
               const needsNs = !String(openUnload?.topic || '').startsWith('/');
-              const body: any = {
+              const body: { action: 'unload'; topic?: string; namespace?: string } = {
                 action: 'unload',
                 topic: openUnload?.topic,
               };
@@ -177,8 +189,9 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
               setSnackbar({ open: true, message: resp.message || 'Moved', severity: 'success' });
               setOpenUnload(null);
               await invalidate();
-            } catch (err: any) {
-              setSnackbar({ open: true, message: err?.message || 'Failed to move topic', severity: 'error' });
+            } catch (err: unknown) {
+              const msg = err instanceof Error ? err.message : 'Failed to move topic';
+              setSnackbar({ open: true, message: msg, severity: 'error' });
             }
           }}
         >
@@ -199,7 +212,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
             <TextField
               label="Namespace"
               value={form._tmpDeleteNs || ''}
-              onChange={(e) => setForm((s: any) => ({ ...s, _tmpDeleteNs: e.target.value }))}
+              onChange={(e) => setForm((s: TopicForm) => ({ ...s, _tmpDeleteNs: e.target.value }))}
               fullWidth
             />
           )}
@@ -213,7 +226,7 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
           onClick={async () => {
             try {
               const needsNs = !String(openDelete?.topic || '').startsWith('/');
-              const body: any = {
+              const body: { action: 'delete'; topic?: string; namespace?: string } = {
                 action: 'delete',
                 topic: openDelete?.topic,
               };
@@ -225,8 +238,9 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
               setSnackbar({ open: true, message: resp.message || 'Deleted', severity: 'success' });
               setOpenDelete(null);
               await invalidate();
-            } catch (err: any) {
-              setSnackbar({ open: true, message: err?.message || 'Failed to delete topic', severity: 'error' });
+            } catch (err: unknown) {
+              const msg = err instanceof Error ? err.message : 'Failed to delete topic';
+              setSnackbar({ open: true, message: msg, severity: 'error' });
             }
           }}
         >
