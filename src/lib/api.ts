@@ -19,3 +19,15 @@ export const fetcher = async <T>(url: string): Promise<T> => {
     throw new Error('An unknown error occurred');
   }
 };
+
+export const postJson = async <TResp, TBody = unknown>(url: string, body: TBody): Promise<TResp> => {
+  try {
+    const response = await gatewayApi.post<TResp>(url, body);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || error.message);
+    }
+    throw new Error('An unknown error occurred');
+  }
+};
