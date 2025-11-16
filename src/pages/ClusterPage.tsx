@@ -82,7 +82,7 @@ export const ClusterPage: React.FC = () => {
             <DataGrid<BrokerRow>
               rows={(brokers || []).map((b) => ({
                 id: b.broker_id,
-                status: b.broker_status,
+                status: b.broker_status ?? '',
                 address: b.broker_addr,
                 role: b.broker_role,
                 topics: b.stats.topics_owned,
