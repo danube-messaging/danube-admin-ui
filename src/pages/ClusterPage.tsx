@@ -15,10 +15,12 @@ import WarningIcon from '@mui/icons-material/Warning';
 import { useNavigate } from 'react-router-dom';
 import { useClusterPage } from '../features/cluster/api';
 import { KpiCard } from '../components/common/KpiCard';
+import { useClusterActions } from '../features/cluster/ClusterActions';
 
 export const ClusterPage: React.FC = () => {
   const navigate = useNavigate();
   const { data, isLoading, error } = useClusterPage();
+  const { openUnloadDialog, openActivateDialog, Dialogs } = useClusterActions();
 
   if (isLoading) {
     return <LinearProgress />;
@@ -144,27 +146,48 @@ export const ClusterPage: React.FC = () => {
                 { field: 'topics', headerName: 'Topics', width: 120, type: 'number' },
                 { field: 'rpcs', headerName: 'RPCs', width: 120, type: 'number' },
                 {
-                  field: 'unload',
-                  headerName: 'Unload',
+                  field: 'action',
+                  headerName: 'Action',
                   width: 110,
                   sortable: false,
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: () => (
-                    <Tooltip title="Move all topics from the broker">
-                      <Fab
-                        size="small"
-                        color="error"
-                        aria-label="unload broker"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        <MoveIcon fontSize="small" />
-                      </Fab>
-                    </Tooltip>
-                  ),
+                  renderCell: (params) => {
+                    const status = String((params.row as any)?.status || '').toLowerCase();
+                    if (status === 'drained') {
+                      return (
+                        <Tooltip title="Activate broker">
+                          <Fab
+                            size="small"
+                            color="primary"
+                            aria-label="activate broker"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openActivateDialog(String(params.id));
+                            }}
+                          >
+                            <CheckIcon fontSize="small" />
+                          </Fab>
+                        </Tooltip>
+                      );
+                    }
+                    return (
+                      <Tooltip title="Move all topics from the broker">
+                        <Fab
+                          size="small"
+                          color="error"
+                          aria-label="unload broker"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openUnloadDialog(String(params.id));
+                          }}
+                        >
+                          <MoveIcon fontSize="small" />
+                        </Fab>
+                      </Tooltip>
+                    );
+                  },
                 },
               ]) as GridColDef[]}
               disableRowSelectionOnClick
@@ -205,6 +228,7 @@ export const ClusterPage: React.FC = () => {
               }}
             />
           </Box>
+          {Dialogs}
         </>
       )}
     </Box>

@@ -16,11 +16,13 @@ import { useBrokerPage } from '../features/broker/api';
 import AddIcon from '@mui/icons-material/AddOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
+import { useTopicActions } from '../features/topics/TopicsActions';
 
 export const BrokerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isLoading, error } = useBrokerPage(id);
+  const { openCreateDialog, openUnloadDialog, openDeleteDialog, Dialogs } = useTopicActions({ invalidateKeys: [['broker', id]] });
 
   if (isLoading) {
     return <LinearProgress />;
@@ -111,7 +113,7 @@ export const BrokerPage: React.FC = () => {
 
           <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
             <Typography variant="h6">Topics</Typography>
-            <Fab variant="extended" size="medium" color="primary" onClick={() => { }}>
+            <Fab variant="extended" size="medium" color="primary" onClick={() => openCreateDialog()}>
               <AddIcon sx={{ mr: 1 }} />
               Create
             </Fab>
@@ -132,13 +134,16 @@ export const BrokerPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: () => (
+                  renderCell: (params) => (
                     <Tooltip title="Move to another broker">
                       <Fab
                         size="small"
                         color="primary"
                         aria-label="move topic"
-                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          openUnloadDialog(String((params.row as any).name));
+                        }}
                       >
                         <MoveIcon fontSize="small" />
                       </Fab>
@@ -153,13 +158,16 @@ export const BrokerPage: React.FC = () => {
                   filterable: false,
                   align: 'right',
                   headerAlign: 'right',
-                  renderCell: () => (
+                  renderCell: (params) => (
                     <Tooltip title="Delete topic">
                       <Fab
                         size="small"
                         color="error"
                         aria-label="delete topic"
-                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          openDeleteDialog(String((params.row as any).name));
+                        }}
                       >
                         <DeleteIcon fontSize="small" />
                       </Fab>
@@ -198,6 +206,7 @@ export const BrokerPage: React.FC = () => {
               }}
             />
           </Box>
+          {Dialogs}
         </>
       )}
     </Box>
