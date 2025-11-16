@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Box, Grid, LinearProgress, Typography, Chip, IconButton, Tooltip } from '@mui/material';
+import { Alert, Box, Grid, LinearProgress, Typography, Chip, IconButton, Tooltip, Fab } from '@mui/material';
 import {
   DataGrid,
   type GridColDef,
@@ -153,7 +153,7 @@ export const ClusterPage: React.FC = () => {
                   headerAlign: 'right',
                   renderCell: () => (
                     <Tooltip title="Move all topics from the broker">
-                      <IconButton
+                      <Fab
                         size="small"
                         color="error"
                         aria-label="unload broker"
@@ -161,8 +161,8 @@ export const ClusterPage: React.FC = () => {
                           e.stopPropagation();
                         }}
                       >
-                        <MoveIcon />
-                      </IconButton>
+                        <MoveIcon fontSize="small" />
+                      </Fab>
                     </Tooltip>
                   ),
                 },

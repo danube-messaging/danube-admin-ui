@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Box, Button, IconButton, LinearProgress, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Fab, LinearProgress, Tooltip, Typography } from '@mui/material';
 import { DataGrid, type GridColDef, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddIcon from '@mui/icons-material/AddOutlined';
@@ -48,9 +48,14 @@ export const TopicListPage: React.FC = () => {
       headerAlign: 'right',
       renderCell: () => (
         <Tooltip title="Move to another broker">
-          <IconButton size="small" aria-label="move topic" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-            <MoveIcon />
-          </IconButton>
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="move topic"
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <MoveIcon fontSize="small" />
+          </Fab>
         </Tooltip>
       ),
     },
@@ -64,9 +69,14 @@ export const TopicListPage: React.FC = () => {
       headerAlign: 'right',
       renderCell: () => (
         <Tooltip title="Delete topic">
-          <IconButton size="small" color="error" aria-label="delete topic" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-            <DeleteIcon />
-          </IconButton>
+          <Fab
+            size="small"
+            color="error"
+            aria-label="delete topic"
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          >
+            <DeleteIcon fontSize="small" />
+          </Fab>
         </Tooltip>
       ),
     },
@@ -86,9 +96,10 @@ export const TopicListPage: React.FC = () => {
 
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
         <Typography variant="h6">Topics</Typography>
-        <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => {}}>
+        <Fab variant="extended" size="medium" color="primary" onClick={() => {}}>
+          <AddIcon sx={{ mr: 1 }} />
           Create
-        </Button>
+        </Fab>
       </Box>
 
       <Box sx={{ width: '100%' }}>

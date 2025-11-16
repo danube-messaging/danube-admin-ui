@@ -54,7 +54,7 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
           </ListItemIcon>
           <ListItemText primary="Cluster" />
         </ListItemButton>
-        <ListItemButton disabled>
+        <ListItemButton component={RouterLink} to="/namespaces" selected={pathname.startsWith('/namespaces')}>
           <ListItemIcon>
             <StorageIcon />
           </ListItemIcon>
@@ -235,7 +235,9 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
             ) : null}
           </ListItemButton>
           <ListItemButton
-            disabled
+            component={RouterLink}
+            to="/namespaces"
+            selected={pathname.startsWith('/namespaces')}
             sx={{
               height: mini ? 50 : 'auto',
               py: mini ? 0 : 1.5,
