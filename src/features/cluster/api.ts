@@ -13,6 +13,7 @@ export interface ClusterBroker {
   broker_id: string;
   broker_addr: string;
   broker_role: string;
+  broker_status?: string;
   stats: ClusterBrokerStats;
 }
 

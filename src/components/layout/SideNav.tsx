@@ -54,13 +54,13 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
           </ListItemIcon>
           <ListItemText primary="Cluster" />
         </ListItemButton>
-        <ListItemButton disabled>
+        <ListItemButton component={RouterLink} to="/namespaces" selected={pathname.startsWith('/namespaces')}>
           <ListItemIcon>
             <StorageIcon />
           </ListItemIcon>
           <ListItemText primary="Namespaces" />
         </ListItemButton>
-        <ListItemButton disabled>
+        <ListItemButton component={RouterLink} to="/topics" selected={pathname.startsWith('/topics')}>
           <ListItemIcon>
             <TopicIcon />
           </ListItemIcon>
@@ -186,54 +186,9 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
             ) : null}
           </ListItemButton>
           <ListItemButton
-            disabled
-            sx={{
-              height: mini ? 50 : 'auto',
-              py: mini ? 0 : 1.5,
-              px: 1,
-              position: 'relative',
-              borderRadius: 1,
-              transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
-            }}
-          >
-            <Box sx={mini ? {
-              position: 'absolute',
-              left: '50%',
-              top: 'calc(50% - 6px)',
-              transform: 'translate(-50%, -50%)',
-            } : {}}>
-              <ListItemIcon sx={{
-                minWidth: 0,
-                justifyContent: mini ? 'center' : 'flex-start',
-                color: 'inherit',
-                mr: mini ? 0 : 1.5,
-              }}>
-                <StorageIcon />
-              </ListItemIcon>
-              {mini && isFullyCollapsed ? (
-                <Typography variant="caption" sx={{
-                  position: 'absolute',
-                  bottom: -18,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  fontSize: 10,
-                  fontWeight: 500,
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: collapsedWidth - 28,
-                }}>
-                  Namespaces
-                </Typography>
-              ) : null}
-            </Box>
-            {!mini && isFullyExpanded ? (
-              <ListItemText primary="Namespaces" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
-            ) : null}
-          </ListItemButton>
-          <ListItemButton
-            disabled
+            component={RouterLink}
+            to="/topics"
+            selected={pathname.startsWith('/topics')}
             sx={{
               height: mini ? 50 : 'auto',
               py: mini ? 0 : 1.5,
@@ -277,6 +232,55 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
             </Box>
             {!mini && isFullyExpanded ? (
               <ListItemText primary="Topics" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
+            ) : null}
+          </ListItemButton>
+          <ListItemButton
+            component={RouterLink}
+            to="/namespaces"
+            selected={pathname.startsWith('/namespaces')}
+            sx={{
+              height: mini ? 50 : 'auto',
+              py: mini ? 0 : 1.5,
+              px: 1,
+              position: 'relative',
+              borderRadius: 1,
+              transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
+            }}
+          >
+            <Box sx={mini ? {
+              position: 'absolute',
+              left: '50%',
+              top: 'calc(50% - 6px)',
+              transform: 'translate(-50%, -50%)',
+            } : {}}>
+              <ListItemIcon sx={{
+                minWidth: 0,
+                justifyContent: mini ? 'center' : 'flex-start',
+                color: 'inherit',
+                mr: mini ? 0 : 1.5,
+              }}>
+                <StorageIcon />
+              </ListItemIcon>
+              {mini && isFullyCollapsed ? (
+                <Typography variant="caption" sx={{
+                  position: 'absolute',
+                  bottom: -18,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 10,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: collapsedWidth - 28,
+                }}>
+                  Namespaces
+                </Typography>
+              ) : null}
+            </Box>
+            {!mini && isFullyExpanded ? (
+              <ListItemText primary="Namespaces" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
             ) : null}
           </ListItemButton>
         </List>
