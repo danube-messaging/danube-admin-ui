@@ -1,5 +1,5 @@
 # ---- Stage 1: Build the React (Vite) app ----
-FROM node:24.11-alpine AS build
+FROM node:24-alpine AS build
 
 # Enable pnpm via corepack (built into Node 24)
 RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
@@ -12,6 +12,9 @@ RUN apk add --no-cache git
 
 # Copy dependency files first (for better caching)
 COPY package.json pnpm-lock.yaml ./
+
+# Make patch-package available globally for dependency postinstall scripts
+RUN npm install -g patch-package
 
 # Install dependencies (lockfile may be out of sync in CI, avoid failing build)
 # Include dev deps for build tools (vite, typescript, patch-package)
