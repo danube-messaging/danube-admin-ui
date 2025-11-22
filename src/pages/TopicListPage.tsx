@@ -1,9 +1,11 @@
 import React from 'react';
-import { Alert, Box, Fab, LinearProgress, Tooltip, Typography } from '@mui/material';
+import { Alert, Box, Fab, LinearProgress, Tooltip, Typography, Chip } from '@mui/material';
 import { DataGrid, type GridColDef, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton, type GridRenderCellParams, type GridRowParams } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddIcon from '@mui/icons-material/AddOutlined';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
+import ReliableIcon from '@mui/icons-material/GppGood';
+import NonReliableIcon from '@mui/icons-material/GppBad';
 import { useNavigate } from 'react-router-dom';
 import { useTopicsList, type TopicRow } from '../features/topics/api';
 import { useTopicActions } from '../features/topics/TopicsActions';
@@ -37,6 +39,22 @@ export const TopicListPage: React.FC = () => {
   const columns: GridColDef<TopicRow>[] = [
     { field: 'broker_id', headerName: 'Broker ID', flex: 1, minWidth: 220 },
     { field: 'name', headerName: 'Topic Name', flex: 1, minWidth: 260 },
+    {
+      field: 'delivery',
+      headerName: 'Delivery',
+      width: 150,
+      sortable: true,
+      renderCell: (params: GridRenderCellParams<TopicRow>) => (
+        <Chip
+          icon={params.row.delivery === 'Reliable' ? <ReliableIcon fontSize="small" /> : <NonReliableIcon fontSize="small" />}
+          label={params.row.delivery === 'Reliable' ? 'Reliable' : 'NonReliable'}
+          color={params.row.delivery === 'Reliable' ? 'success' : 'warning'}
+          size="small"
+          variant="filled"
+          sx={{ borderRadius: 2, fontWeight: 600 }}
+        />
+      ),
+    },
     { field: 'producers', headerName: 'Producers', width: 130, type: 'number' },
     { field: 'subscriptions', headerName: 'Subscriptions', width: 150, type: 'number' },
     { field: 'consumers', headerName: 'Consumers', width: 130, type: 'number' },

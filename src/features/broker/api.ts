@@ -20,6 +20,7 @@ export interface BrokerMetrics {
 
 export interface BrokerTopic {
   name: string;
+  delivery: string;
   producers_connected: number;
   consumers_connected: number;
   subscriptions: number;
