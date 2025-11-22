@@ -15,7 +15,7 @@ COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies (lockfile may be out of sync in CI, avoid failing build)
 # Include dev deps for build tools (vite, typescript, patch-package)
-RUN pnpm install --no-frozen-lockfile --include=dev
+RUN pnpm install
 
 # Copy the rest of the application
 COPY . .
