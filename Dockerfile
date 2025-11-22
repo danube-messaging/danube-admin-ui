@@ -7,11 +7,18 @@ RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
 # Set working directory
 WORKDIR /app
 
+# patch-package needs git available
+RUN apk add --no-cache git
+
 # Copy dependency files first (for better caching)
 COPY package.json pnpm-lock.yaml ./
 
+# Ensure patch-package is available even if dev deps were skipped by env
+RUN pnpm add -g patch-package
+
 # Install dependencies (lockfile may be out of sync in CI, avoid failing build)
-RUN pnpm install --no-frozen-lockfile
+# Include dev deps for build tools (vite, typescript, patch-package)
+RUN pnpm install --no-frozen-lockfile --include=dev
 
 # Copy the rest of the application
 COPY . .
