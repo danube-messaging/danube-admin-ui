@@ -99,18 +99,15 @@ jobs:
       - name: Compose release body
         shell: bash
         run: |
-          set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
-          IMAGE="ghcr.io/${{ github.repository_owner }}/danube-admin-ui"
-          cat > RELEASE_BODY.md <<EOF
+          cat > RELEASE_BODY.md <<'EOF'
           ## Docker image
 
-          Image: `${IMAGE}:${TAG}` (multi-arch)
+          Image: ghcr.io/${{ github.repository_owner }}/danube-admin-ui:${{ github.ref_name }} (multi-arch)
 
           ### Run with Docker
 
           ```bash
-          docker run -d --name danube-admin-ui -p 5173:80 -e VITE_GATEWAY_BASE_URL=http://localhost:8080 ${IMAGE}:${TAG}
+          docker run -d --name danube-admin-ui -p 5173:80 -e VITE_GATEWAY_BASE_URL=http://localhost:8080 ghcr.io/${{ github.repository_owner }}/danube-admin-ui:${{ github.ref_name }}
           ```
           Open: http://localhost:5173
 
@@ -119,7 +116,7 @@ jobs:
           ```yaml
           services:
             danube-admin-ui:
-              image: ${IMAGE}:${TAG}
+              image: ghcr.io/${{ github.repository_owner }}/danube-admin-ui:${{ github.ref_name }}
               ports:
                 - "5173:80"
               environment:
@@ -138,4 +135,3 @@ jobs:
           make_latest: true
           fail_on_unmatched_files: false
           generate_release_notes: false
-          allowUpdates: true
