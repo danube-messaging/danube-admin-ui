@@ -13,9 +13,6 @@ RUN apk add --no-cache git
 # Copy dependency files first (for better caching)
 COPY package.json pnpm-lock.yaml ./
 
-# Ensure patch-package is available even if dev deps were skipped by env
-RUN pnpm add -g patch-package
-
 # Install dependencies (lockfile may be out of sync in CI, avoid failing build)
 # Include dev deps for build tools (vite, typescript, patch-package)
 RUN pnpm install --no-frozen-lockfile --include=dev
