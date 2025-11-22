@@ -10,6 +10,7 @@ export interface BrokerIdentity {
 
 export interface BrokerTopicMini {
   name: string;
+  delivery: string;
   producers_connected: number;
   consumers_connected: number;
   subscriptions: number;
@@ -30,6 +31,7 @@ export interface TopicRow {
   id: string;
   broker_id: string;
   name: string;
+  delivery: string;
   producers: number;
   subscriptions: number;
   consumers: number;
@@ -49,6 +51,7 @@ export const useTopicsList = () => {
             id: `${b.broker.broker_id}:${t.name}`,
             broker_id: b.broker.broker_id,
             name: t.name,
+            delivery: t.delivery,
             producers: t.producers_connected,
             subscriptions: t.subscriptions,
             consumers: t.consumers_connected,

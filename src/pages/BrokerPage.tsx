@@ -9,14 +9,17 @@ import {
   Typography,
   Tooltip,
   Fab,
+  Chip,
 } from '@mui/material';
 import { DataGrid, type GridColDef, type GridRowParams, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton, type GridRenderCellParams } from '@mui/x-data-grid';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useBrokerPage } from '../features/broker/api';
+import { useBrokerPage, type BrokerTopic } from '../features/broker/api';
 import AddIcon from '@mui/icons-material/AddOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
 import { useTopicActions } from '../features/topics/TopicsActions';
+import ReliableIcon from '@mui/icons-material/GppGood';
+import NonReliableIcon from '@mui/icons-material/GppBad';
 
 export const BrokerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,7 +36,7 @@ export const BrokerPage: React.FC = () => {
   }
 
   const { broker, metrics, topics, errors } = data || {};
-  type BrokerTopicRow = { id: string; name: string; producers: number; consumers: number; subscriptions: number };
+  type BrokerTopicRow = { id: string; name: string; delivery: string; producers: number; consumers: number; subscriptions: number };
 
   const QuickToolbar = () => (
     <GridToolbarContainer>
@@ -121,9 +124,25 @@ export const BrokerPage: React.FC = () => {
           </Box>
           <Box sx={{ width: '100%' }}>
             <DataGrid<BrokerTopicRow>
-              rows={(topics || []).map((t) => ({ id: t.name, name: t.name, producers: t.producers_connected, consumers: t.consumers_connected, subscriptions: t.subscriptions }))}
+              rows={((topics as BrokerTopic[]) || []).map((t: BrokerTopic) => ({ id: t.name, name: t.name, delivery: t.delivery, producers: t.producers_connected, consumers: t.consumers_connected, subscriptions: t.subscriptions }))}
               columns={([
                 { field: 'name', headerName: 'Name', flex: 1, minWidth: 220 },
+                {
+                  field: 'delivery',
+                  headerName: 'Delivery',
+                  width: 150,
+                  sortable: true,
+                  renderCell: (params: GridRenderCellParams<BrokerTopicRow>) => (
+                    <Chip
+                      icon={params.row.delivery === 'Reliable' ? <ReliableIcon fontSize="small" /> : <NonReliableIcon fontSize="small" />}
+                      label={params.row.delivery === 'Reliable' ? 'Reliable' : 'NonReliable'}
+                      color={params.row.delivery === 'Reliable' ? 'success' : 'warning'}
+                      size="small"
+                      variant="filled"
+                      sx={{ borderRadius: 2, fontWeight: 600 }}
+                    />
+                  ),
+                },
                 { field: 'producers', headerName: 'Producers', width: 130, type: 'number' },
                 { field: 'subscriptions', headerName: 'Subscriptions', width: 150, type: 'number' },
                 { field: 'consumers', headerName: 'Consumers', width: 130, type: 'number' },
