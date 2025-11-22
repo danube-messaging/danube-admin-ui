@@ -1,0 +1,141 @@
+name: Release Docker image
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  docker-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+            platform: linux/amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/danube-admin-ui
+          tags: |
+            type=ref,event=tag
+            type=raw,value=latest,enable=true
+
+      - name: Build and push image (${{ matrix.arch }})
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          platforms: ${{ matrix.platform }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/danube-admin-ui:${{ github.ref_name }}-${{ matrix.arch }}
+            ghcr.io/${{ github.repository_owner }}/danube-admin-ui:latest-${{ matrix.arch }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=ui-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=ui-${{ matrix.arch }}
+
+  docker-manifest:
+    needs: docker-build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create multi-arch manifest
+        run: |
+          set -euo pipefail
+          TAG="${{ github.ref_name }}"
+          IMAGE="ghcr.io/${{ github.repository_owner }}/danube-admin-ui"
+
+          docker buildx imagetools create \
+            -t ${IMAGE}:${TAG} \
+            -t ${IMAGE}:latest \
+            ${IMAGE}:${TAG}-amd64 \
+            ${IMAGE}:${TAG}-arm64
+
+  release:
+    needs: [docker-manifest]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+      deployments: read
+      issues: read
+    steps:
+      - name: Compose release body
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          IMAGE="ghcr.io/${{ github.repository_owner }}/danube-admin-ui"
+          cat > RELEASE_BODY.md <<EOF
+          ## Docker image
+
+          Image: `${IMAGE}:${TAG}` (multi-arch)
+
+          ### Run with Docker
+
+          ```bash
+          docker run -d --name danube-admin-ui -p 5173:80 -e VITE_GATEWAY_BASE_URL=http://localhost:8080 ${IMAGE}:${TAG}
+          ```
+          Open: http://localhost:5173
+
+          ### docker-compose example
+
+          ```yaml
+          services:
+            danube-admin-ui:
+              image: ${IMAGE}:${TAG}
+              ports:
+                - "5173:80"
+              environment:
+                - VITE_GATEWAY_BASE_URL=http://localhost:8080
+          ```
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Danube Admin UI ${{ github.ref_name }}
+          body_path: RELEASE_BODY.md
+          draft: false
+          prerelease: false
+          make_latest: true
+          fail_on_unmatched_files: false
+          generate_release_notes: false
+          allowUpdates: true
