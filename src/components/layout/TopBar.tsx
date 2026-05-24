@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, Box, IconButton, Tooltip, Typography } from '@mui/material';
+import { AppBar, Toolbar, Box, IconButton, Tooltip, Typography, Stack } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
 import LightModeIcon from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -54,15 +55,29 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
         >
           <MenuIcon />
         </IconButton>
-        <Box
-          component="img"
-          src={danubeLogo}
-          alt="Danube logo"
-          sx={{ height: 24, width: 24, mr: 1, borderRadius: '4px' }}
-        />
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          Danube Admin
-        </Typography>
+
+        <Stack
+          direction="row"
+          alignItems="center"
+          component={RouterLink}
+          to="/"
+          sx={{
+            textDecoration: 'none',
+            color: 'inherit',
+            cursor: 'pointer',
+            mr: 1,
+          }}
+        >
+          <Box
+            component="img"
+            src={danubeLogo}
+            alt="Danube logo"
+            sx={{ height: 24, width: 24, mr: 1, borderRadius: '4px' }}
+          />
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            Danube Admin
+          </Typography>
+        </Stack>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ mr: 2 }}>
           <LiveIndicator />

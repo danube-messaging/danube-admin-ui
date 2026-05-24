@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import DashboardIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import StorageIcon from '@mui/icons-material/StorageOutlined';
 import TopicIcon from '@mui/icons-material/TopicOutlined';
+import SchemaIcon from '@mui/icons-material/SchemaOutlined';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 export const collapsedWidth = 104;
 export const expandedWidth = 240;
@@ -65,6 +66,12 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
             <TopicIcon />
           </ListItemIcon>
           <ListItemText primary="Topics" />
+        </ListItemButton>
+        <ListItemButton component={RouterLink} to="/schemas" selected={pathname.startsWith('/schemas')}>
+          <ListItemIcon>
+            <SchemaIcon />
+          </ListItemIcon>
+          <ListItemText primary="Schemas" />
         </ListItemButton>
       </List>
     </>
@@ -281,6 +288,55 @@ export const SideNav: React.FC<SideNavProps> = ({ mobileOpen, onClose, expanded,
             </Box>
             {!mini && isFullyExpanded ? (
               <ListItemText primary="Namespaces" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
+            ) : null}
+          </ListItemButton>
+          <ListItemButton
+            component={RouterLink}
+            to="/schemas"
+            selected={pathname.startsWith('/schemas')}
+            sx={{
+              height: mini ? 50 : 'auto',
+              py: mini ? 0 : 1.5,
+              px: 1,
+              position: 'relative',
+              borderRadius: 1,
+              transition: (t) => t.transitions.create(['height', 'padding'], { duration: t.transitions.duration.shorter }),
+            }}
+          >
+            <Box sx={mini ? {
+              position: 'absolute',
+              left: '50%',
+              top: 'calc(50% - 6px)',
+              transform: 'translate(-50%, -50%)',
+            } : {}}>
+              <ListItemIcon sx={{
+                minWidth: 0,
+                justifyContent: mini ? 'center' : 'flex-start',
+                color: 'inherit',
+                mr: mini ? 0 : 1.5,
+              }}>
+                <SchemaIcon />
+              </ListItemIcon>
+              {mini && isFullyCollapsed ? (
+                <Typography variant="caption" sx={{
+                  position: 'absolute',
+                  bottom: -18,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: 10,
+                  fontWeight: 500,
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: collapsedWidth - 28,
+                }}>
+                  Schemas
+                </Typography>
+              ) : null}
+            </Box>
+            {!mini && isFullyExpanded ? (
+              <ListItemText primary="Schemas" sx={{ whiteSpace: 'nowrap', zIndex: 1 }} />
             ) : null}
           </ListItemButton>
         </List>
