@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   Grid,
-  LinearProgress,
   Typography,
   Tooltip,
   Fab,
@@ -21,18 +20,21 @@ import { useTopicActions } from '../features/topics/TopicsActions';
 import ReliableIcon from '@mui/icons-material/GppGood';
 import NonReliableIcon from '@mui/icons-material/GppBad';
 
+import { SkeletonBrokerPage } from '../components/common/SkeletonLoader';
+import { ErrorFallback } from '../components/common/ErrorFallback';
+
 export const BrokerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data, isLoading, error } = useBrokerPage(id);
+  const { data, isLoading, error, refetch } = useBrokerPage(id);
   const { openCreateDialog, openUnloadDialog, openDeleteDialog, Dialogs } = useTopicActions({ invalidateKeys: [['broker', id]] });
 
   if (isLoading) {
-    return <LinearProgress />;
+    return <SkeletonBrokerPage />;
   }
 
   if (error) {
-    return <Alert severity="error">Failed to load broker data: {error.message}</Alert>;
+    return <ErrorFallback message={error.message} onRetry={refetch} />;
   }
 
   const { broker, metrics, topics, errors } = data || {};
@@ -63,20 +65,22 @@ export const BrokerPage: React.FC = () => {
 
       {data && (
         <>
-          <Box mb={3}>
-            <Typography variant="h4" gutterBottom>
-              Broker {broker?.broker_id}
-            </Typography>
-            <Typography variant="body1" color="textSecondary">
-              {broker?.broker_role} - {broker?.broker_addr}
-            </Typography>
+          <Box mb={3} display="flex" justifyContent="space-between" alignItems="flex-start">
+            <Box>
+              <Typography variant="h4" gutterBottom>
+                Broker {broker?.broker_id}
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                {broker?.broker_role} - {broker?.broker_addr}
+              </Typography>
+            </Box>
           </Box>
 
           <Grid container spacing={3} mb={3}>
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Card>
                 <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
+                  <Typography color="text.secondary" gutterBottom>
                     Topics Owned
                   </Typography>
                   <Typography variant="h5">{metrics?.topics_owned}</Typography>
@@ -86,7 +90,7 @@ export const BrokerPage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Card>
                 <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
+                  <Typography color="text.secondary" gutterBottom>
                     Total RPCs
                   </Typography>
                   <Typography variant="h5">{metrics?.rpc_total}</Typography>
@@ -96,7 +100,7 @@ export const BrokerPage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Card>
                 <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
+                  <Typography color="text.secondary" gutterBottom>
                     Inbound Bytes
                   </Typography>
                   <Typography variant="h5">{metrics?.inbound_bytes_total}</Typography>
@@ -106,7 +110,7 @@ export const BrokerPage: React.FC = () => {
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Card>
                 <CardContent>
-                  <Typography color="textSecondary" gutterBottom>
+                  <Typography color="text.secondary" gutterBottom>
                     Outbound Bytes
                   </Typography>
                   <Typography variant="h5">{metrics?.outbound_bytes_total}</Typography>

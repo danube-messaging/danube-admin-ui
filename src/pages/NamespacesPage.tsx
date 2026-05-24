@@ -1,19 +1,22 @@
 import React from 'react';
-import { Alert, Box, Card, CardContent, Chip, Grid, LinearProgress, Typography } from '@mui/material';
+import { Alert, Box, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
 import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { useNamespaces } from '../features/namespaces/api';
 import { KpiCard } from '../components/common/KpiCard';
 import { Link as RouterLink } from 'react-router-dom';
 
+import { SkeletonNamespacesPage } from '../components/common/SkeletonLoader';
+import { ErrorFallback } from '../components/common/ErrorFallback';
+
 export const NamespacesPage: React.FC = () => {
-  const { data, isLoading, error } = useNamespaces();
+  const { data, isLoading, error, refetch } = useNamespaces();
 
   if (isLoading) {
-    return <LinearProgress />;
+    return <SkeletonNamespacesPage />;
   }
 
   if (error) {
-    return <Alert severity="error">Failed to load namespaces: {String((error as Error)?.message || error)}</Alert>;
+    return <ErrorFallback message={String(error.message || error)} onRetry={refetch} />;
   }
 
   const namespaces = data?.namespaces || [];
@@ -50,9 +53,6 @@ export const NamespacesPage: React.FC = () => {
 
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
         <Typography variant="h4">Namespaces</Typography>
-        <Typography variant="caption" color="text.secondary">
-          Updated at {data ? new Date(data.timestamp).toLocaleString() : ''}
-        </Typography>
       </Box>
 
       <Grid container spacing={3}>

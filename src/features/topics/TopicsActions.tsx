@@ -1,18 +1,18 @@
 import React from 'react';
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  Stack,
-  Button,
-  Snackbar,
-  Typography,
-} from '@mui/material';
+   Dialog,
+   DialogTitle,
+   DialogContent,
+   DialogActions,
+   TextField,
+   MenuItem,
+   Stack,
+   Button,
+   Typography,
+ } from '@mui/material';
 import { postJson } from '../../lib/api';
 import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '../../components/common/ToastContext';
 
 export interface UseTopicActionsOptions {
   invalidateKeys?: Array<readonly unknown[]>;
@@ -20,13 +20,7 @@ export interface UseTopicActionsOptions {
 
 export const useTopicActions = (options?: UseTopicActionsOptions) => {
   const queryClient = useQueryClient();
-
-  type SnackbarState = { open: boolean; message: string; severity: 'success' | 'error' };
-  const [snackbar, setSnackbar] = React.useState<SnackbarState>({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
+  const { showToast } = useToast();
 
   const [openCreate, setOpenCreate] = React.useState(false);
   const [openUnload, setOpenUnload] = React.useState<{ open: boolean; topic: string } | null>(null);
@@ -138,12 +132,12 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
                 '/ui/v1/topics/actions',
                 body,
               );
-              setSnackbar({ open: true, message: resp.message || 'Created', severity: 'success' });
+              showToast(resp.message || 'Created', 'success');
               setOpenCreate(false);
               await invalidate();
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : 'Failed to create topic';
-              setSnackbar({ open: true, message: msg, severity: 'error' });
+              showToast(msg, 'error');
             }
           }}
         >
@@ -187,12 +181,12 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
                 '/ui/v1/topics/actions',
                 body,
               );
-              setSnackbar({ open: true, message: resp.message || 'Moved', severity: 'success' });
+              showToast(resp.message || 'Moved', 'success');
               setOpenUnload(null);
               await invalidate();
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : 'Failed to move topic';
-              setSnackbar({ open: true, message: msg, severity: 'error' });
+              showToast(msg, 'error');
             }
           }}
         >
@@ -236,12 +230,12 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
                 '/ui/v1/topics/actions',
                 body,
               );
-              setSnackbar({ open: true, message: resp.message || 'Deleted', severity: 'success' });
+              showToast(resp.message || 'Deleted', 'success');
               setOpenDelete(null);
               await invalidate();
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : 'Failed to delete topic';
-              setSnackbar({ open: true, message: msg, severity: 'error' });
+              showToast(msg, 'error');
             }
           }}
         >
@@ -256,12 +250,6 @@ export const useTopicActions = (options?: UseTopicActionsOptions) => {
       {CreateDialog}
       {UnloadDialog}
       {DeleteDialog}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar((prev: SnackbarState) => ({ ...prev, open: false }))}
-        message={snackbar.message}
-      />
     </>
   );
 

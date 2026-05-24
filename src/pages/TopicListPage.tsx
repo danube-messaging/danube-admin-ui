@@ -1,5 +1,4 @@
-import React from 'react';
-import { Alert, Box, Fab, LinearProgress, Tooltip, Typography, Chip } from '@mui/material';
+import { Alert, Box, Fab, Tooltip, Typography, Chip } from '@mui/material';
 import { DataGrid, type GridColDef, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton, type GridRenderCellParams, type GridRowParams } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddIcon from '@mui/icons-material/AddOutlined';
@@ -10,17 +9,20 @@ import { useNavigate } from 'react-router-dom';
 import { useTopicsList, type TopicRow } from '../features/topics/api';
 import { useTopicActions } from '../features/topics/TopicsActions';
 
+import { SkeletonTable } from '../components/common/SkeletonLoader';
+import { ErrorFallback } from '../components/common/ErrorFallback';
+
 export const TopicListPage: React.FC = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useTopicsList();
+  const { data, isLoading, error, refetch } = useTopicsList();
   const { openCreateDialog, openUnloadDialog, openDeleteDialog, Dialogs } = useTopicActions();
 
   if (isLoading) {
-    return <LinearProgress />;
+    return <SkeletonTable rowsCount={10} />;
   }
 
   if (error) {
-    return <Alert severity="error">Failed to load topics: {String((error as Error)?.message || error)}</Alert>;
+    return <ErrorFallback message={String(error.message || error)} onRetry={refetch} />;
   }
 
   const rows = data?.rows || [];
@@ -120,8 +122,8 @@ export const TopicListPage: React.FC = () => {
         </Box>
       )}
 
-      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-        <Typography variant="h6">Topics</Typography>
+      <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
+        <Typography variant="h4" sx={{ fontWeight: 700 }}>Topics</Typography>
         <Fab variant="extended" size="medium" color="primary" onClick={() => openCreateDialog()}>
           <AddIcon sx={{ mr: 1 }} />
           Create

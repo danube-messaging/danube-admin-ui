@@ -70,7 +70,7 @@ export const TopicSchemaAndSubscriptions: React.FC<{ topic: TopicDto | undefined
           Schema
         </Typography>
         <Paper sx={{ p: 2 }}>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
             Type: {topic?.type_schema}
           </Typography>
           <Box
@@ -78,7 +78,7 @@ export const TopicSchemaAndSubscriptions: React.FC<{ topic: TopicDto | undefined
             sx={{
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-all',
-              bgcolor: (t) => t.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+              bgcolor: 'action.hover',
               p: 2,
               borderRadius: 1,
             }}
