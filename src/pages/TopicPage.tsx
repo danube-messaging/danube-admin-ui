@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
-  Grid,
   Typography,
   Stack,
   ToggleButtonGroup,
@@ -21,7 +20,6 @@ import { TopicCharts } from './topic/TopicCharts';
 import type { SeriesItem } from './topic/TopicCharts';
 import { TopicReliable } from './topic/TopicReliable';
 import type { ReliableMetricsDto } from './topic/TopicReliable';
-import { StatCard } from '../components/common/StatCard';
 
 import { SkeletonTopicPage } from '../components/common/SkeletonLoader';
 import { ErrorFallback } from '../components/common/ErrorFallback';
@@ -120,24 +118,6 @@ export const TopicPage: React.FC = () => {
           <TopicKpis metrics={metrics} />
 
           <TopicSchemaAndSubscriptions topic={topic} />
-
-          {/* Sample StatCard using bytes_out_rate_1m */}
-          <Grid container spacing={3} mb={2}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <StatCard
-                title="Bytes Out Rate (1m)"
-                value={(() => {
-                  const pts = series?.find((s: SeriesItem) => s.name === 'bytes_out_rate_1m')?.points || [];
-                  const v = pts.length ? pts[pts.length - 1][1] : 0;
-                  return (Number.isFinite(v) ? v : 0).toFixed(2);
-                })()}
-                interval={`Last ${Math.floor((range.to - range.from) / 60)}m`}
-                data={(series?.find((s: SeriesItem) => s.name === 'bytes_out_rate_1m')?.points || []).map((p: [number, number]) => p[1])}
-                compact
-              />
-            </Grid>
-          </Grid>
-
           {/* Charts */}
           <TopicCharts series={series} error={seriesError} />
 

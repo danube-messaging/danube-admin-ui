@@ -5,6 +5,8 @@ import { BrokerPage } from '../pages/BrokerPage';
 import { TopicPage } from '../pages/TopicPage';
 import { TopicListPage } from '../pages/TopicListPage';
 import { NamespacesPage } from '../pages/NamespacesPage';
+import { SchemasPage } from '../pages/SchemasPage';
+import { SchemaDetailPage } from '../pages/SchemaDetailPage';
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +36,14 @@ export const router = createBrowserRouter([
       {
         path: 'namespaces',
         element: <NamespacesPage />,
+      },
+      {
+        path: 'schemas',
+        element: <SchemasPage />,
+      },
+      {
+        path: 'schemas/:subject',
+        element: <SchemaDetailPage />,
       },
     ],
   },

@@ -3,8 +3,11 @@ import { fetcher } from '../../lib/api';
 
 export interface Topic {
   name: string;
-  type_schema: string;
-  schema_data: string; // base64 encoded
+  schema_subject?: string;
+  schema_id?: number;
+  schema_version?: number;
+  schema_type?: string;
+  compatibility_mode?: string;
   subscriptions: string[];
 }
 
