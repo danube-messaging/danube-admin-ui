@@ -1,0 +1,202 @@
+# Danube Admin UI local development environment
+# Spins up the complete Danube stack using official pre-built images,
+# while mounting the local admin-ui source code for live development and hot-reloading.
+
+services:
+  # Danube Broker 1
+  broker1:
+    container_name: "danube-broker1"
+    image: ghcr.io/danube-messaging/danube-broker:latest
+    restart: on-failure
+    environment:
+      - RUST_LOG=danube_broker=info,danube_core=info,openraft=warn
+    volumes:
+      - ./danube_broker.yml:/etc/danube_broker.yml:ro
+      - broker1_data:/danube-data
+    networks:
+      - danube_net
+    ports:
+      - "6650:6650" # Broker gRPC
+      - "50051:50051" # Admin API
+      - "9040:9040" # Prometheus metrics
+    command:
+      [
+        "--config-file",
+        "/etc/danube_broker.yml",
+        "--broker-addr",
+        "0.0.0.0:6650",
+        "--admin-addr",
+        "0.0.0.0:50051",
+        "--raft-addr",
+        "0.0.0.0:7650",
+        "--prom-exporter",
+        "0.0.0.0:9040",
+        "--advertised-addr",
+        "broker1:6650",
+      ]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9040/metrics || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Danube Broker 2
+  broker2:
+    container_name: "danube-broker2"
+    image: ghcr.io/danube-messaging/danube-broker:latest
+    restart: on-failure
+    environment:
+      - RUST_LOG=danube_broker=info,danube_core=info,openraft=warn
+    volumes:
+      - ./danube_broker.yml:/etc/danube_broker.yml:ro
+      - broker2_data:/danube-data
+    networks:
+      - danube_net
+    ports:
+      - "6651:6650" # Broker gRPC
+      - "50052:50051" # Admin API
+      - "9041:9040" # Prometheus metrics
+    command:
+      [
+        "--config-file",
+        "/etc/danube_broker.yml",
+        "--broker-addr",
+        "0.0.0.0:6650",
+        "--admin-addr",
+        "0.0.0.0:50051",
+        "--raft-addr",
+        "0.0.0.0:7650",
+        "--prom-exporter",
+        "0.0.0.0:9040",
+        "--advertised-addr",
+        "broker2:6650",
+      ]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9040/metrics || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Danube Broker 3
+  broker3:
+    container_name: "danube-broker3"
+    image: ghcr.io/danube-messaging/danube-broker:latest
+    restart: on-failure
+    environment:
+      - RUST_LOG=danube_broker=info,danube_core=info,openraft=warn
+    volumes:
+      - ./danube_broker.yml:/etc/danube_broker.yml:ro
+      - broker3_data:/danube-data
+    networks:
+      - danube_net
+    ports:
+      - "6652:6650" # Broker gRPC
+      - "50053:50051" # Admin API
+      - "9042:9040" # Prometheus metrics
+    command:
+      [
+        "--config-file",
+        "/etc/danube_broker.yml",
+        "--broker-addr",
+        "0.0.0.0:6650",
+        "--admin-addr",
+        "0.0.0.0:50051",
+        "--raft-addr",
+        "0.0.0.0:7650",
+        "--prom-exporter",
+        "0.0.0.0:9040",
+        "--advertised-addr",
+        "broker3:6650",
+      ]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9040/metrics || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Prometheus for metrics collection
+  prometheus:
+    container_name: "danube-prometheus"
+    image: prom/prometheus:latest
+    depends_on:
+      broker1:
+        condition: service_started
+      broker2:
+        condition: service_started
+      broker3:
+        condition: service_started
+    networks:
+      - danube_net
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  # Danube Admin Server (HTTP API for the UI)
+  danube-admin:
+    container_name: "danube-admin"
+    image: ghcr.io/danube-messaging/danube-admin:latest
+    depends_on:
+      broker1:
+        condition: service_started
+      prometheus:
+        condition: service_started
+    networks:
+      - danube_net
+    ports:
+      - "8080:8080"
+    command:
+      [
+        "serve",
+        "--mode",
+        "ui",
+        "--broker-endpoint",
+        "broker1:50051",
+        "--listen-addr",
+        "0.0.0.0:8080",
+        "--request-timeout-ms",
+        "5000",
+        "--cache-ttl-ms",
+        "3000",
+        "--prometheus-url",
+        "http://prometheus:9090",
+        "--cors-allow-origin",
+        "http://localhost:5173",
+      ]
+
+  # Local Admin UI Development Container
+  admin-ui:
+    container_name: "danube-admin-ui"
+    build:
+      context: ../
+      dockerfile: Dockerfile.dev
+    depends_on:
+      danube-admin:
+        condition: service_started
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../:/app
+      - /app/node_modules # prevent overwriting node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # helps with file watching in Docker
+      - VITE_GATEWAY_BASE_URL=http://localhost:8080
+    command: pnpm dev --host 0.0.0.0
+    networks:
+      - danube_net
+
+networks:
+  danube_net:
+    name: danube_net
+    driver: bridge
+
+volumes:
+  broker1_data:
+    name: danube_broker1_data
+  broker2_data:
+    name: danube_broker2_data
+  broker3_data:
+    name: danube_broker3_data

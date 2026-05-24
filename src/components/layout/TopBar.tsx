@@ -6,6 +6,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useThemeMode } from '../../app/themeMode';
 import danubeLogo from '../../assets/danube.png';
 
+import { LiveIndicator } from '../common/LiveIndicator';
+
 interface TopBarProps {
   onMenuClick?: () => void;
 }
@@ -62,6 +64,9 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
           Danube Admin
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ mr: 2 }}>
+          <LiveIndicator />
+        </Box>
         <Tooltip title={resolvedMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
           <IconButton color="inherit" onClick={handleToggle} aria-label="toggle theme mode">
             {resolvedMode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}

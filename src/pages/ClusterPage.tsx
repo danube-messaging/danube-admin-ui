@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Box, Grid, LinearProgress, Typography, Chip, Tooltip, Fab } from '@mui/material';
+import { Alert, Box, Grid, Typography, Chip, Tooltip, Fab } from '@mui/material';
 import {
   DataGrid,
   type GridColDef,
@@ -18,17 +18,21 @@ import { useClusterPage } from '../features/cluster/api';
 import { KpiCard } from '../components/common/KpiCard';
 import { useClusterActions } from '../features/cluster/ClusterActions';
 
+import { SkeletonClusterPage } from '../components/common/SkeletonLoader';
+import { ErrorFallback } from '../components/common/ErrorFallback';
+import danubeLogo from '../assets/danube.png';
+
 export const ClusterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useClusterPage();
+  const { data, isLoading, error, refetch } = useClusterPage();
   const { openUnloadDialog, openActivateDialog, Dialogs } = useClusterActions();
 
   if (isLoading) {
-    return <LinearProgress />;
+    return <SkeletonClusterPage />;
   }
 
   if (error) {
-    return <Alert severity="error">Failed to load cluster data: {error.message}</Alert>;
+    return <ErrorFallback message={error.message} onRetry={refetch} />;
   }
 
   const { totals, brokers, errors } = data || {};
@@ -53,10 +57,20 @@ export const ClusterPage: React.FC = () => {
 
       {data && (
         <>
-          <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography variant="h4">Danube Cluster</Typography>
-            <Typography variant="caption" color="text.secondary">
-              Updated at {new Date(data.timestamp).toLocaleString()}
+          <Box display="flex" alignItems="center" gap={2} mb={3}>
+            <Box
+              component="img"
+              src={danubeLogo}
+              alt="Danube Logo"
+              sx={{
+                height: 40,
+                width: 40,
+                borderRadius: '8px',
+                filter: 'drop-shadow(0 0 12px var(--danube-palette-primary-main))',
+              }}
+            />
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              Danube Cluster
             </Typography>
           </Box>
 

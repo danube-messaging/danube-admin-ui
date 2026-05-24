@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './app/queryClient';
 import { router } from './app/routes';
 import { ThemeModeProvider } from './app/ThemeModeProvider';
+import { ToastProvider } from './components/common/ToastContext';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
@@ -12,7 +13,9 @@ if (rootElement) {
     <StrictMode>
       <ThemeModeProvider>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+          <ToastProvider>
+            <RouterProvider router={router} />
+          </ToastProvider>
         </QueryClientProvider>
       </ThemeModeProvider>
     </StrictMode>

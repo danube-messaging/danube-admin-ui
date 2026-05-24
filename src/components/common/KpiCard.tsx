@@ -15,7 +15,7 @@ export const KpiCard: React.FC<KpiCardProps> = ({ title, value, subtitle, icon }
         <Box display="flex" alignItems="center" gap={2}>
           {icon}
           <Box>
-            <Typography color="textSecondary" gutterBottom>
+            <Typography color="text.secondary" gutterBottom>
               {title}
             </Typography>
             <Typography variant="h5">{value}</Typography>

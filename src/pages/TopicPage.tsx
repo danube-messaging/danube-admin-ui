@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Grid,
-  LinearProgress,
   Typography,
   Stack,
   ToggleButtonGroup,
@@ -24,9 +23,12 @@ import { TopicReliable } from './topic/TopicReliable';
 import type { ReliableMetricsDto } from './topic/TopicReliable';
 import { StatCard } from '../components/common/StatCard';
 
+import { SkeletonTopicPage } from '../components/common/SkeletonLoader';
+import { ErrorFallback } from '../components/common/ErrorFallback';
+
 export const TopicPage: React.FC = () => {
   const { topic: topicName } = useParams<{ topic: string }>();
-  const { data, isLoading, error } = useTopicPage(topicName);
+  const { data, isLoading, error, refetch } = useTopicPage(topicName);
   const [series, setSeries] = useState<SeriesItem[] | null>(null);
   const [seriesError, setSeriesError] = useState<string | null>(null);
   const [range, setRange] = useState<{ from: number; to: number; step: string }>(() => {
@@ -53,11 +55,11 @@ export const TopicPage: React.FC = () => {
   }, [topicName, range]);
 
   if (isLoading) {
-    return <LinearProgress />;
+    return <SkeletonTopicPage />;
   }
 
   if (error) {
-    return <Alert severity="error">Failed to load topic data: {error.message}</Alert>;
+    return <ErrorFallback message={error.message} onRetry={refetch} />;
   }
 
   const { topic, metrics, errors } = (data || {}) as { topic?: TopicDto; metrics?: TopicMetricsDto & { reliable?: ReliableMetricsDto | null }; errors?: string[] };
@@ -78,7 +80,9 @@ export const TopicPage: React.FC = () => {
         <>
           <Box mb={3}>
             <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }} justifyContent="space-between" gap={2}>
-              <Typography variant="h4">Topic: {topic?.name}</Typography>
+              <Box display="flex" alignItems="center" gap={2}>
+                <Typography variant="h4">Topic: {topic?.name}</Typography>
+              </Box>
               <Stack direction="row" gap={2} alignItems="center">
                 <ToggleButtonGroup
                   exclusive

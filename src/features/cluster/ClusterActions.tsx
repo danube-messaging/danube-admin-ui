@@ -1,7 +1,8 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, Button, Snackbar, Typography, Checkbox, FormControlLabel } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Stack, Button, Typography, Checkbox, FormControlLabel } from '@mui/material';
 import { postJson } from '../../lib/api';
 import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '../../components/common/ToastContext';
 
 export interface UseClusterActionsOptions {
   invalidateKeys?: Array<readonly unknown[]>;
@@ -16,16 +17,9 @@ type UnloadForm = {
   reason: string;
 };
 
-type SnackbarState = { open: boolean; message: string; severity: 'success' | 'error' };
-
 export const useClusterActions = (options?: UseClusterActionsOptions) => {
   const queryClient = useQueryClient();
-
-  const [snackbar, setSnackbar] = React.useState<SnackbarState>({
-    open: false,
-    message: '',
-    severity: 'success',
-  });
+  const { showToast } = useToast();
 
   const [openUnload, setOpenUnload] = React.useState<{ open: boolean; broker_id: string } | null>(null);
   const [openActivate, setOpenActivate] = React.useState<{ open: boolean; broker_id: string } | null>(null);
@@ -107,12 +101,12 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
                 '/ui/v1/cluster/actions',
                 body,
               );
-              setSnackbar({ open: true, message: resp.message || 'Unload started', severity: 'success' });
+              showToast(resp.message || 'Unload started', 'success');
               setOpenUnload(null);
               await invalidate();
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : 'Failed to unload broker';
-              setSnackbar({ open: true, message: msg, severity: 'error' });
+              showToast(msg, 'error');
             }
           }}
         >
@@ -146,12 +140,12 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
                 '/ui/v1/cluster/actions',
                 body,
               );
-              setSnackbar({ open: true, message: resp.message || 'Broker activated', severity: 'success' });
+              showToast(resp.message || 'Broker activated', 'success');
               setOpenActivate(null);
               await invalidate();
             } catch (err: unknown) {
               const msg = err instanceof Error ? err.message : 'Failed to activate broker';
-              setSnackbar({ open: true, message: msg, severity: 'error' });
+              showToast(msg, 'error');
             }
           }}
         >
@@ -165,12 +159,6 @@ export const useClusterActions = (options?: UseClusterActionsOptions) => {
     <>
       {UnloadDialog}
       {ActivateDialog}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar((prev: SnackbarState) => ({ ...prev, open: false }))}
-        message={snackbar.message}
-      />
     </>
   );
 
