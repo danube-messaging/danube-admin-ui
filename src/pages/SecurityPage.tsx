@@ -166,8 +166,9 @@ export const SecurityPage: React.FC = () => {
       setCreateRoleOpen(false);
       setRoleName('');
       setSelectedPermissions([]);
-    } catch (err: any) {
-      setRoleFormError(err.message || 'Failed to create role.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setRoleFormError(msg);
     }
   };
 
@@ -207,8 +208,9 @@ export const SecurityPage: React.FC = () => {
       setPrincipalName('');
       setBindingResource('');
       setBindingRoles([]);
-    } catch (err: any) {
-      setBindingFormError(err.message || 'Failed to create binding.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setBindingFormError(msg);
     }
   };
 
@@ -237,8 +239,9 @@ export const SecurityPage: React.FC = () => {
       }
       setDeleteConfirmOpen(false);
       setDeleteTarget(null);
-    } catch (err: any) {
-      alert(err.message || 'Deletion failed.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(msg);
     }
   };
 
