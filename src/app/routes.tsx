@@ -7,6 +7,7 @@ import { TopicListPage } from '../pages/TopicListPage';
 import { NamespacesPage } from '../pages/NamespacesPage';
 import { SchemasPage } from '../pages/SchemasPage';
 import { SchemaDetailPage } from '../pages/SchemaDetailPage';
+import { SecurityPage } from '../pages/SecurityPage';
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: 'schemas/:subject',
         element: <SchemaDetailPage />,
+      },
+      {
+        path: 'security',
+        element: <SecurityPage />,
       },
     ],
   },
