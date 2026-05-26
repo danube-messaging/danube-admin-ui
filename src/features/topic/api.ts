@@ -1,6 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetcher } from '../../lib/api';
 
+export interface SubscriptionFailurePolicy {
+  max_redelivery_count: number;
+  ack_timeout_ms: number;
+  base_redelivery_delay_ms: number;
+  max_redelivery_delay_ms: number;
+  backoff_strategy: string; // "fixed" | "exponential"
+  dead_letter_topic?: string;
+  poison_policy: string; // "dead_letter" | "block" | "drop"
+}
+
+export interface SubscriptionDetail {
+  name: string;
+  subscription_type: string;
+  failure_policy?: SubscriptionFailurePolicy | null;
+}
+
 export interface Topic {
   name: string;
   schema_subject?: string;
@@ -8,7 +24,7 @@ export interface Topic {
   schema_version?: number;
   schema_type?: string;
   compatibility_mode?: string;
-  subscriptions: string[];
+  subscriptions: SubscriptionDetail[];
 }
 
 export interface TopicMetrics {
