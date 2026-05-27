@@ -28,9 +28,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import SaveIcon from '@mui/icons-material/SaveOutlined';
+import SchemaIcon from '@mui/icons-material/SchemaOutlined';
+import SettingsIcon from '@mui/icons-material/SettingsOutlined';
+import HistoryIcon from '@mui/icons-material/HistoryOutlined';
 
 import { useSchemaDetail, useSchemaAction } from '../features/schemas/api';
-import { KpiCard } from '../components/common/KpiCard';
 import { ErrorFallback } from '../components/common/ErrorFallback';
 import { SkeletonNamespacesPage } from '../components/common/SkeletonLoader';
 
@@ -143,7 +145,8 @@ export const SchemaDetailPage: React.FC = () => {
 
       <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} justifyItems="center" justifyContent="space-between" mb={3} gap={2}>
         <Stack direction="row" alignItems="center" gap={1.5}>
-          <Typography variant="h4" fontWeight="600">
+          <SchemaIcon color="primary" sx={{ fontSize: 32 }} />
+          <Typography variant="h4" sx={{ fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>
             {subject}
           </Typography>
         </Stack>
@@ -187,33 +190,84 @@ export const SchemaDetailPage: React.FC = () => {
       )}
 
       <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <KpiCard
-            title="Schema Type"
-            value={data.schema_type.toUpperCase()}
-            subtitle="Central registry type format"
-          />
+        {/* Card 1: Schema Type */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                <SchemaIcon color="primary" />
+                <Typography variant="subtitle1" fontWeight="600">
+                  Schema Type
+                </Typography>
+              </Stack>
+              <Box display="grid" gridTemplateColumns="1fr" gap={2}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Format
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {data.schema_type.toUpperCase()}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <KpiCard
-            title="Compatibility"
-            value={data.compatibility_mode}
-            subtitle="Schema evolution constraint"
-          />
+
+        {/* Card 2: Compatibility */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                <SettingsIcon color="primary" />
+                <Typography variant="subtitle1" fontWeight="600">
+                  Compatibility Mode
+                </Typography>
+              </Stack>
+              <Box display="grid" gridTemplateColumns="1fr" gap={2}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Rule Constraint
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {data.compatibility_mode.toUpperCase()}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <KpiCard
-            title="Total Versions"
-            value={versions.length}
-            subtitle="Count of historical iterations"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <KpiCard
-            title="Latest Schema ID"
-            value={latestSchema?.schema_id || 'N/A'}
-            subtitle="Global index ID allocation"
-          />
+
+        {/* Card 3: Evolution Statistics */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                <HistoryIcon color="primary" />
+                <Typography variant="subtitle1" fontWeight="600">
+                  Evolution Statistics
+                </Typography>
+              </Stack>
+              <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Total Versions
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {versions.length}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Latest Schema ID
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {latestSchema?.schema_id || 'N/A'}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
 
@@ -320,8 +374,8 @@ export const SchemaDetailPage: React.FC = () => {
 
               <Box
                 sx={{
-                  background: 'rgb(30, 30, 30)',
-                  color: 'rgb(220, 220, 220)',
+                  backgroundColor: 'action.hover',
+                  color: 'text.primary',
                   fontFamily: '"Fira Code", monospace, Courier, monospace',
                   fontSize: '0.875rem',
                   p: 2.5,
@@ -329,6 +383,8 @@ export const SchemaDetailPage: React.FC = () => {
                   overflowX: 'auto',
                   maxHeight: 500,
                   whiteSpace: 'pre-wrap',
+                  border: '1px solid',
+                  borderColor: 'divider',
                 }}
               >
                 {displayDefinition}

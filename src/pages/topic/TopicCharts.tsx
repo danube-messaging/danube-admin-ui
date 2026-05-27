@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Alert, Box, Grid, Paper, Typography } from '@mui/material';
+import { Alert, Box, Grid, Card, CardContent, Typography } from '@mui/material';
 import { LineChart } from '@mui/x-charts';
 
 export type SeriesItem = { name: string; labels?: Record<string, string> | null; points: [number, number][] };
@@ -29,21 +29,23 @@ const CardChart: React.FC<{
 }>
   = ({ title, leftName, leftData, leftColor, rightName, rightData, rightColor, xData }) => {
     return (
-      <Paper sx={{ p: 2 }}>
-        <Typography variant="h6" gutterBottom>{title}</Typography>
-        <Box sx={{ width: '100%', height: 280 }}>
-          <LineChart
-            xAxis={[{ scaleType: 'time', data: xData }]}
-            series={[
-              { id: leftName, label: leftName, data: leftData, color: leftColor, showMark: false, area: false },
-              { id: rightName, label: rightName, data: rightData, color: rightColor, showMark: false, area: false },
-            ]}
-            height={260}
-            margin={{ left: 40, right: 20, top: 10, bottom: 30 }}
-            grid={{ horizontal: true }}
-          />
-        </Box>
-      </Paper>
+      <Card variant="outlined">
+        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+          <Typography variant="h6" fontWeight="600" gutterBottom>{title}</Typography>
+          <Box sx={{ width: '100%', height: 280 }}>
+            <LineChart
+              xAxis={[{ scaleType: 'time', data: xData }]}
+              series={[
+                { id: leftName, label: leftName, data: leftData, color: leftColor, showMark: false, area: false },
+                { id: rightName, label: rightName, data: rightData, color: rightColor, showMark: false, area: false },
+              ]}
+              height={260}
+              margin={{ left: 40, right: 20, top: 10, bottom: 30 }}
+              grid={{ horizontal: true }}
+            />
+          </Box>
+        </CardContent>
+      </Card>
     );
   };
 

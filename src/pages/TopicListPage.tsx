@@ -1,10 +1,11 @@
-import { Alert, Box, Fab, Tooltip, Typography, Chip } from '@mui/material';
+import { Alert, Box, Tooltip, Typography, Chip, IconButton, Button } from '@mui/material';
 import { DataGrid, type GridColDef, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton, type GridRenderCellParams, type GridRowParams } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddIcon from '@mui/icons-material/AddOutlined';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
-import ReliableIcon from '@mui/icons-material/GppGood';
-import NonReliableIcon from '@mui/icons-material/GppBad';
+import TopicIcon from '@mui/icons-material/TopicOutlined';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import { useNavigate } from 'react-router-dom';
 import { useTopicsList, type TopicRow } from '../features/topics/api';
 import { useTopicActions } from '../features/topics/TopicsActions';
@@ -48,12 +49,12 @@ export const TopicListPage: React.FC = () => {
       sortable: true,
       renderCell: (params: GridRenderCellParams<TopicRow>) => (
         <Chip
-          icon={params.row.delivery === 'Reliable' ? <ReliableIcon fontSize="small" /> : <NonReliableIcon fontSize="small" />}
+          icon={params.row.delivery === 'Reliable' ? <CheckCircleOutlinedIcon fontSize="small" /> : <WarningAmberOutlinedIcon fontSize="small" />}
           label={params.row.delivery === 'Reliable' ? 'Reliable' : 'NonReliable'}
           color={params.row.delivery === 'Reliable' ? 'success' : 'warning'}
           size="small"
-          variant="filled"
-          sx={{ borderRadius: 2, fontWeight: 600 }}
+          variant="outlined"
+          sx={{ fontWeight: 600 }}
         />
       ),
     },
@@ -70,7 +71,7 @@ export const TopicListPage: React.FC = () => {
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<TopicRow>) => (
         <Tooltip title="Move to another broker">
-          <Fab
+          <IconButton
             size="small"
             color="primary"
             aria-label="move topic"
@@ -80,7 +81,7 @@ export const TopicListPage: React.FC = () => {
             }}
           >
             <MoveIcon fontSize="small" />
-          </Fab>
+          </IconButton>
         </Tooltip>
       ),
     },
@@ -94,7 +95,7 @@ export const TopicListPage: React.FC = () => {
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<TopicRow>) => (
         <Tooltip title="Delete topic">
-          <Fab
+          <IconButton
             size="small"
             color="error"
             aria-label="delete topic"
@@ -104,7 +105,7 @@ export const TopicListPage: React.FC = () => {
             }}
           >
             <DeleteIcon fontSize="small" />
-          </Fab>
+          </IconButton>
         </Tooltip>
       ),
     },
@@ -123,11 +124,29 @@ export const TopicListPage: React.FC = () => {
       )}
 
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
-        <Typography variant="h4" sx={{ fontWeight: 700 }}>Topics</Typography>
-        <Fab variant="extended" size="medium" color="primary" onClick={() => openCreateDialog()}>
-          <AddIcon sx={{ mr: 1 }} />
-          Create
-        </Fab>
+        <Box display="flex" alignItems="center" gap={1.5}>
+          <TopicIcon color="primary" sx={{ fontSize: 32 }} />
+          <Typography variant="h4" sx={{ fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>
+            Topics
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => openCreateDialog()}
+          sx={{
+            borderRadius: 2,
+            textTransform: 'none',
+            fontWeight: 600,
+            px: 3,
+            boxShadow: 'none',
+            '&:hover': {
+              boxShadow: 'none',
+            },
+          }}
+        >
+          Create Topic
+        </Button>
       </Box>
 
       <Box sx={{ width: '100%' }}>

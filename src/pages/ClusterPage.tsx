@@ -4,7 +4,8 @@ import {
   Box,
   Grid,
   Typography,
-  Paper,
+  Card,
+  CardContent,
   Stack,
   Dialog,
   DialogTitle,
@@ -31,6 +32,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import InfoIcon from '@mui/icons-material/Info';
 import SyncIcon from '@mui/icons-material/Sync';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
+import TrafficIcon from '@mui/icons-material/SwapCallsOutlined';
 import { useNavigate } from 'react-router-dom';
 import { useClusterPage } from '../features/cluster/api';
 import { useClusterActions } from '../features/cluster/ClusterActions';
@@ -46,10 +48,10 @@ import { BrokerCard } from '../components/cluster/BrokerCard';
 export const ClusterPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  
+
   const { data, isLoading, error, refetch } = useClusterPage();
   const { data: raft, isLoading: isRaftLoading, error: raftError } = useRaftStatus();
-  
+
   const { openUnloadDialog, openActivateDialog, Dialogs } = useClusterActions();
   const raftActionMutation = useRaftAction();
   const { data: balance, error: balanceError } = useClusterBalance();
@@ -184,59 +186,98 @@ export const ClusterPage: React.FC = () => {
           <Grid container spacing={3} mb={3}>
             {/* Card 1: Load Manager Info */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: '8px', height: '100%' }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1.5} sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Load Manager Info
-                </Typography>
-                <Stack spacing={1.5}>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography variant="body2" color="text.secondary">Brokers Count</Typography>
-                    <Typography variant="body2" fontWeight="700">{totals?.broker_count ?? 0}</Typography>
+              <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                  <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                    <EqualizerIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Load Manager Info
+                    </Typography>
                   </Stack>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography variant="body2" color="text.secondary">Total Topics</Typography>
-                    <Typography variant="body2" fontWeight="700">{totals?.topics_total ?? 0}</Typography>
-                  </Stack>
-                </Stack>
-              </Paper>
+                  <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Brokers Count
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {totals?.broker_count ?? 0}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Total Topics
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {totals?.topics_total ?? 0}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
 
             {/* Card 2: Traffic & Connectivity */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: '8px', height: '100%' }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1.5} sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Traffic & Connectivity
-                </Typography>
-                <Stack spacing={1.5}>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography variant="body2" color="text.secondary">Total RPCs</Typography>
-                    <Typography variant="body2" fontWeight="700">{totals?.rpc_total ?? 0}</Typography>
+              <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                  <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                    <TrafficIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Traffic & Connectivity
+                    </Typography>
                   </Stack>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography variant="body2" color="text.secondary">Active Connections</Typography>
-                    <Typography variant="body2" fontWeight="700">{totals?.active_connections ?? 0}</Typography>
-                  </Stack>
-                </Stack>
-              </Paper>
+                  <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Total RPCs
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {totals?.rpc_total ?? 0}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Active Connections
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {totals?.active_connections ?? 0}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
 
             {/* Card 3: Raft Consensus */}
             <Grid size={{ xs: 12, md: 4 }}>
-              <Paper variant="outlined" sx={{ p: 2, borderRadius: '8px', height: '100%' }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1.5} sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Raft Consensus Health
-                </Typography>
-                <Stack spacing={1.5}>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography variant="body2" color="text.secondary">Election Term</Typography>
-                    <Typography variant="body2" fontWeight="700">{raft?.current_term ?? 0}</Typography>
+              <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                  <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                    <SyncIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Raft Consensus Health
+                    </Typography>
                   </Stack>
-                  <Stack direction="row" justifyContent="space-between">
-                    <Typography variant="body2" color="text.secondary">Last Applied Index</Typography>
-                    <Typography variant="body2" fontWeight="700">{raft?.last_applied ?? 0}</Typography>
-                  </Stack>
-                </Stack>
-              </Paper>
+                  <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Election Term
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {raft?.current_term ?? 0}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Last Applied Index
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {raft?.last_applied ?? 0}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
 
@@ -253,8 +294,8 @@ export const ClusterPage: React.FC = () => {
               const raftRole = raft?.voters.includes(id)
                 ? 'voter'
                 : raft?.learners.includes(id)
-                ? 'learner'
-                : 'none';
+                  ? 'learner'
+                  : 'none';
 
               return (
                 <Grid size={{ xs: 12, md: 6 }} key={id}>
@@ -328,22 +369,22 @@ export const ClusterPage: React.FC = () => {
           </Dialog>
 
           {/* Scaling Information Alert Banner */}
-          <Alert 
-            severity="info" 
+          <Alert
+            severity="info"
             icon={<InfoIcon fontSize="small" />}
-            sx={{ 
+            sx={{
               mt: 2,
-              mb: 3, 
+              mb: 3,
               borderRadius: '8px',
               '& .MuiAlert-message': { width: '100%' }
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 500 }}>
               Review the{' '}
-              <Link 
-                href="https://danube-messaging.com/concepts/scaling/" 
-                target="_blank" 
-                rel="noopener" 
+              <Link
+                href="https://danube-messaging.com/concepts/scaling/"
+                target="_blank"
+                rel="noopener"
                 sx={{ fontWeight: 600, textDecoration: 'underline' }}
               >
                 Cluster Scaling Guide
@@ -366,151 +407,156 @@ export const ClusterPage: React.FC = () => {
               Error loading cluster balance metrics: {balanceError.message}
             </Alert>
           ) : !balance ? (
-            <Paper variant="outlined" sx={{ p: 4, textAlign: 'center', borderRadius: '12px', mb: 4 }}>
-              <CircularProgress size={30} sx={{ mb: 2 }} />
-              <Typography variant="body2" color="text.secondary">
-                Scraping cluster balance metrics...
-              </Typography>
-            </Paper>
+            <Card variant="outlined" sx={{ mb: 4 }}>
+              <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                <CircularProgress size={30} sx={{ mb: 2 }} />
+                <Typography variant="body2" color="text.secondary">
+                  Scraping cluster balance metrics...
+                </Typography>
+              </CardContent>
+            </Card>
           ) : (
-            <Paper variant="outlined" sx={{ p: 3, borderRadius: '12px', mb: 4 }}>
-              <Grid container spacing={4}>
-                <Grid size={{ xs: 12, md: 5 }}>
-                  <Typography variant="subtitle1" fontWeight="700" mb={1.5} display="flex" alignItems="center" gap={1}>
-                    <EqualizerIcon color="primary" /> Balance Health Score
-                  </Typography>
+            <Card variant="outlined" sx={{ mb: 4 }}>
+              <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+                <Grid container spacing={4}>
+                  <Grid size={{ xs: 12, md: 5 }}>
+                    <Typography variant="subtitle1" fontWeight="700" mb={1.5} display="flex" alignItems="center" gap={1}>
+                      <EqualizerIcon color="primary" /> Balance Health Score
+                    </Typography>
 
-                  <Box sx={{ mb: 2.5 }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                      <Typography variant="body2" fontWeight="500">
-                        Imbalance Index (CV)
-                      </Typography>
-                      <Chip
-                        label={
-                          balance.coefficient_of_variation < 0.15
-                            ? 'Well Balanced'
-                            : balance.coefficient_of_variation < 0.4
-                            ? 'Moderately Imbalanced'
-                            : 'Highly Imbalanced'
-                        }
+                    <Box sx={{ mb: 2.5 }}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                        <Typography variant="body2" fontWeight="500">
+                          Imbalance Index (CV)
+                        </Typography>
+                        <Chip
+                          label={
+                            balance.coefficient_of_variation < 0.15
+                              ? 'Well Balanced'
+                              : balance.coefficient_of_variation < 0.4
+                                ? 'Moderately Imbalanced'
+                                : 'Highly Imbalanced'
+                          }
+                          color={
+                            balance.coefficient_of_variation < 0.15
+                              ? 'success'
+                              : balance.coefficient_of_variation < 0.4
+                                ? 'warning'
+                                : 'error'
+                          }
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontWeight: 600 }}
+                        />
+                      </Stack>
+                      <LinearProgress
+                        variant="determinate"
+                        value={Math.min(100, balance.coefficient_of_variation * 100)}
                         color={
                           balance.coefficient_of_variation < 0.15
                             ? 'success'
                             : balance.coefficient_of_variation < 0.4
-                            ? 'warning'
-                            : 'error'
+                              ? 'warning'
+                              : 'error'
                         }
-                        size="small"
-                        sx={{ borderRadius: 1.5, fontWeight: 600, height: 20, fontSize: '0.72rem' }}
+                        sx={{ height: 8, borderRadius: 4, bgcolor: 'action.hover' }}
                       />
-                    </Stack>
-                    <LinearProgress
-                      variant="determinate"
-                      value={Math.min(100, balance.coefficient_of_variation * 100)}
-                      color={
-                        balance.coefficient_of_variation < 0.15
-                          ? 'success'
-                          : balance.coefficient_of_variation < 0.4
-                          ? 'warning'
-                          : 'error'
-                      }
-                      sx={{ height: 8, borderRadius: 4, bgcolor: 'action.hover' }}
-                    />
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                      Coefficient of Variation: <strong>{balance.coefficient_of_variation.toFixed(3)}</strong> (0.0 = perfect balance)
-                    </Typography>
-                  </Box>
-
-                  <Stack spacing={1.5}>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="body2" color="text.secondary">Active Assignment Strategy</Typography>
-                      <Typography variant="body2" fontWeight="700" sx={{ textTransform: 'capitalize' }}>
-                        {balance.assignment_strategy || 'Balanced'}
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                        Coefficient of Variation: <strong>{balance.coefficient_of_variation.toFixed(3)}</strong> (0.0 = perfect balance)
                       </Typography>
-                    </Stack>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="body2" color="text.secondary">Mean Load (topics/broker)</Typography>
-                      <Typography variant="body2" fontWeight="700">{balance.mean_load.toFixed(1)}</Typography>
-                    </Stack>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="body2" color="text.secondary">Standard Deviation</Typography>
-                      <Typography variant="body2" fontWeight="700">{balance.std_deviation.toFixed(2)}</Typography>
-                    </Stack>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="body2" color="text.secondary">Min / Max Load</Typography>
-                      <Typography variant="body2" fontWeight="700">{balance.min_load} / {balance.max_load} topics</Typography>
-                    </Stack>
-                  </Stack>
+                    </Box>
 
-                  <Box sx={{ mt: 3 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<SyncIcon />}
-                      fullWidth
-                      onClick={() => {
-                        setDryRun(true);
-                        setMaxMoves('');
-                        setRebalanceResult(null);
-                        setIsRebalanceExecuted(false);
-                        setIsRebalanceDialogOpen(true);
-                      }}
-                    >
-                      Trigger Cluster Rebalance
-                    </Button>
-                  </Box>
-                </Grid>
+                    <Stack spacing={1.5}>
+                      <Stack direction="row" justifyContent="space-between">
+                        <Typography variant="body2" color="text.secondary">Active Assignment Strategy</Typography>
+                        <Typography variant="body2" fontWeight="700" sx={{ textTransform: 'capitalize' }}>
+                          {balance.assignment_strategy || 'Balanced'}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" justifyContent="space-between">
+                        <Typography variant="body2" color="text.secondary">Mean Load (topics/broker)</Typography>
+                        <Typography variant="body2" fontWeight="700">{balance.mean_load.toFixed(1)}</Typography>
+                      </Stack>
+                      <Stack direction="row" justifyContent="space-between">
+                        <Typography variant="body2" color="text.secondary">Standard Deviation</Typography>
+                        <Typography variant="body2" fontWeight="700">{balance.std_deviation.toFixed(2)}</Typography>
+                      </Stack>
+                      <Stack direction="row" justifyContent="space-between">
+                        <Typography variant="body2" color="text.secondary">Min / Max Load</Typography>
+                        <Typography variant="body2" fontWeight="700">{balance.min_load} / {balance.max_load} topics</Typography>
+                      </Stack>
+                    </Stack>
 
-                <Grid size={{ xs: 12, md: 7 }}>
-                  <Typography variant="subtitle1" fontWeight="700" mb={2}>
-                    Broker Load Distribution
-                  </Typography>
-                  <TableContainer sx={{ border: '1px solid', borderColor: 'divider', borderRadius: '8px', maxHeight: 250 }}>
-                    <Table size="small" stickyHeader>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell sx={{ fontWeight: 600 }}>Broker ID</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }} align="right">Topics (Load)</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }} align="right">Relative Load</TableCell>
-                          <TableCell sx={{ fontWeight: 600 }} align="center">Status</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {balance.brokers.map((br) => {
-                          const maxLoad = Math.max(1, balance.max_load);
-                          const percentage = (br.topic_count / maxLoad) * 100;
-                          return (
-                            <TableRow key={br.broker_id}>
-                              <TableCell sx={{ fontFamily: 'monospace', fontWeight: 500 }}>{br.broker_id}</TableCell>
-                              <TableCell align="right">{br.topic_count}</TableCell>
-                              <TableCell align="right" sx={{ width: '40%' }}>
-                                <Stack direction="row" alignItems="center" gap={1}>
-                                  <Box sx={{ flexGrow: 1 }}>
-                                    <LinearProgress variant="determinate" value={percentage} sx={{ height: 6, borderRadius: 3 }} />
-                                  </Box>
-                                  <Typography variant="caption" sx={{ minWidth: 24 }}>
-                                    {Math.round(percentage)}%
-                                  </Typography>
-                                </Stack>
-                              </TableCell>
-                              <TableCell align="center">
-                                {br.is_overloaded ? (
-                                  <Chip label="Overloaded" color="error" variant="outlined" size="small" sx={{ height: 18, fontSize: '0.65rem' }} />
-                                ) : br.is_underloaded ? (
-                                  <Chip label="Underloaded" color="warning" variant="outlined" size="small" sx={{ height: 18, fontSize: '0.65rem' }} />
-                                ) : (
-                                  <Chip label="Normal" color="success" variant="outlined" size="small" sx={{ height: 18, fontSize: '0.65rem' }} />
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                    <Box sx={{ mt: 3 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<SyncIcon />}
+                        fullWidth
+                        onClick={() => {
+                          setDryRun(true);
+                          setMaxMoves('');
+                          setRebalanceResult(null);
+                          setIsRebalanceExecuted(false);
+                          setIsRebalanceDialogOpen(true);
+                        }}
+                      >
+                        Trigger Cluster Rebalance
+                      </Button>
+                    </Box>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 7 }}>
+                    <Typography variant="subtitle1" fontWeight="700" mb={2}>
+                      Broker Load Distribution
+                    </Typography>
+                    <TableContainer sx={{ border: '1px solid', borderColor: 'divider', borderRadius: '8px', maxHeight: 250 }}>
+                      <Table size="small" stickyHeader>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell sx={{ fontWeight: 600 }}>Broker ID</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }} align="right">Topics (Load)</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }} align="right">Relative Load</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }} align="center">Status</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {balance.brokers.map((br) => {
+                            const maxLoad = Math.max(1, balance.max_load);
+                            const percentage = (br.topic_count / maxLoad) * 100;
+                            return (
+                              <TableRow key={br.broker_id}>
+                                <TableCell sx={{ fontFamily: 'monospace', fontWeight: 500 }}>{br.broker_id}</TableCell>
+                                <TableCell align="right">{br.topic_count}</TableCell>
+                                <TableCell align="right" sx={{ width: '40%' }}>
+                                  <Stack direction="row" alignItems="center" gap={1}>
+                                    <Box sx={{ flexGrow: 1 }}>
+                                      <LinearProgress variant="determinate" value={percentage} sx={{ height: 6, borderRadius: 3 }} />
+                                    </Box>
+                                    <Typography variant="caption" sx={{ minWidth: 24 }}>
+                                      {Math.round(percentage)}%
+                                    </Typography>
+                                  </Stack>
+                                </TableCell>
+                                <TableCell align="center">
+                                  {br.is_overloaded ? (
+                                    <Chip label="Overloaded" color="error" variant="outlined" size="small" sx={{ fontWeight: 600 }} />
+                                  ) : br.is_underloaded ? (
+                                    <Chip label="Underloaded" color="warning" variant="outlined" size="small" sx={{ fontWeight: 600 }} />
+                                  ) : (
+                                    <Chip label="Normal" color="success" variant="outlined" size="small" sx={{ fontWeight: 600 }} />
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Paper>
+              </CardContent>
+            </Card>
           )}
 
           {/* Dialog: Trigger Rebalance */}
@@ -614,8 +660,8 @@ export const ClusterPage: React.FC = () => {
                   {rebalanceMutation.isPending
                     ? 'Processing...'
                     : dryRun
-                    ? 'Calculate Proposed Moves'
-                    : 'Execute Rebalance'}
+                      ? 'Calculate Proposed Moves'
+                      : 'Execute Rebalance'}
                 </Button>
               )}
             </DialogActions>
