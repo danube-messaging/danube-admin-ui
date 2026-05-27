@@ -1,8 +1,8 @@
 import React from 'react';
-import { Alert, Box, Card, CardContent, Chip, Grid, Typography } from '@mui/material';
+import { Alert, Box, Card, CardContent, Chip, Grid, Typography, Divider, Stack } from '@mui/material';
 import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
 import { useNamespaces } from '../features/namespaces/api';
-import { KpiCard } from '../components/common/KpiCard';
+import StorageIcon from '@mui/icons-material/StorageOutlined';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { SkeletonNamespacesPage } from '../components/common/SkeletonLoader';
@@ -51,56 +51,100 @@ export const NamespacesPage: React.FC = () => {
         </Box>
       )}
 
-      <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-        <Typography variant="h4">Namespaces</Typography>
+      <Box display="flex" alignItems="center" gap={1.5} mb={3}>
+        <StorageIcon color="primary" sx={{ fontSize: 32 }} />
+        <Typography variant="h4" sx={{ fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>
+          Namespaces
+        </Typography>
       </Box>
 
-      <Grid container spacing={3}>
+      <Stack spacing={3}>
         {namespaces.map((ns) => {
           const partitionRe = /-part-\d+$/;
           const normalTopics = (ns.topics || []).filter((t) => !partitionRe.test(t));
           const partitionedTopics = (ns.topics || []).filter((t) => partitionRe.test(t));
           return (
-          <Grid key={ns.name} size={{ xs: 12, sm: 6, lg: 4, xl: 3 }}>
-            <KpiCard
-              title={ns.name}
-              value={
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Typography component="span" variant="h6">{ns.topics.length}</Typography>
-                  <Typography component="span" color="text.secondary">topics</Typography>
-                </Box>
-              }
-              subtitle="Namespace overview"
-            />
-            <Box mt={1}>
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="subtitle2" gutterBottom>Topics</Typography>
-                  <Box display="flex" flexWrap="wrap" gap={1}>
-                    {normalTopics.length === 0 ? (
-                      <Typography color="text.secondary">No topics</Typography>
-                    ) : (
-                      normalTopics.map((t) => {
-                        const topicPath = t.startsWith('/') ? t : `/${t}`;
-                        return (
-                          <Chip
-                            key={`norm-${t}`}
-                            size="small"
-                            label={t}
-                            variant="outlined"
-                            component={RouterLink}
-                            to={`/topics/${encodeURIComponent(topicPath)}`}
-                            clickable
-                          />
-                        );
-                      })
-                    )}
+            <Card key={ns.name} variant="outlined" sx={{ borderRadius: 2 }}>
+              <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={2} mb={2}>
+                  <Box display="flex" alignItems="center" gap={1.5}>
+                    <StorageIcon color="primary" sx={{ fontSize: 24 }} />
+                    <Typography variant="h6" fontWeight="600" sx={{ fontFamily: 'Outfit, sans-serif' }}>
+                      {ns.name}
+                    </Typography>
                   </Box>
-                  <Box mt={2}>
-                    <Typography variant="subtitle2" gutterBottom>Partitioned Topics</Typography>
-                    <Box display="flex" flexWrap="wrap" gap={1}>
+                  <Stack direction="row" gap={1.5}>
+                    <Chip
+                      label={`${ns.topics.length} Topics Total`}
+                      color="primary"
+                      variant="outlined"
+                      size="small"
+                      sx={{ fontWeight: 600 }}
+                    />
+                  </Stack>
+                </Box>
+                
+                <Divider sx={{ mb: 2 }} />
+
+                <Grid container spacing={3}>
+                  {/* Topics Column */}
+                  <Grid size={{ xs: 12, md: 5 }}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="600" mb={1.5}>
+                      Normal Topics ({normalTopics.length})
+                    </Typography>
+                    <Box 
+                      display="flex" 
+                      flexWrap="wrap" 
+                      gap={1} 
+                      sx={{ 
+                        maxHeight: 250, 
+                        overflowY: 'auto',
+                        pr: 1,
+                        '&::-webkit-scrollbar': { width: '6px' },
+                        '&::-webkit-scrollbar-thumb': { backgroundColor: 'divider', borderRadius: '3px' }
+                      }}
+                    >
+                      {normalTopics.length === 0 ? (
+                        <Typography color="text.secondary" variant="body2">No normal topics</Typography>
+                      ) : (
+                        normalTopics.map((t) => {
+                          const topicPath = t.startsWith('/') ? t : `/${t}`;
+                          return (
+                            <Chip
+                              key={`norm-${t}`}
+                              size="small"
+                              label={t}
+                              variant="outlined"
+                              component={RouterLink}
+                              to={`/topics/${encodeURIComponent(topicPath)}`}
+                              clickable
+                              sx={{ fontWeight: 600 }}
+                            />
+                          );
+                        })
+                      )}
+                    </Box>
+                  </Grid>
+
+                  {/* Partitioned Topics Column */}
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="600" mb={1.5}>
+                      Partitioned Topics ({partitionedTopics.length})
+                    </Typography>
+                    <Box 
+                      display="flex" 
+                      flexWrap="wrap" 
+                      gap={1} 
+                      sx={{ 
+                        maxHeight: 250, 
+                        overflowY: 'auto',
+                        pr: 1,
+                        '&::-webkit-scrollbar': { width: '6px' },
+                        '&::-webkit-scrollbar-thumb': { backgroundColor: 'divider', borderRadius: '3px' }
+                      }}
+                    >
                       {partitionedTopics.length === 0 ? (
-                        <Typography color="text.secondary">No partitioned topics</Typography>
+                        <Typography color="text.secondary" variant="body2">No partitioned topics</Typography>
                       ) : (
                         partitionedTopics.map((t) => {
                           const topicPath = t.startsWith('/') ? t : `/${t}`;
@@ -113,22 +157,29 @@ export const NamespacesPage: React.FC = () => {
                               component={RouterLink}
                               to={`/topics/${encodeURIComponent(topicPath)}`}
                               clickable
+                              sx={{ fontWeight: 600 }}
                             />
                           );
                         })
                       )}
                     </Box>
-                  </Box>
-                  <Box mt={2}>
-                    <Typography variant="subtitle2" gutterBottom>Policies</Typography>
-                    {renderPoliciesTree(ns.policies, ns.name)}
-                  </Box>
-                </CardContent>
-              </Card>
-            </Box>
-          </Grid>
-        );})}
-      </Grid>
+                  </Grid>
+
+                  {/* Policies Column */}
+                  <Grid size={{ xs: 12, md: 3 }}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight="600" mb={1.5}>
+                      Policies
+                    </Typography>
+                    <Box sx={{ background: 'action.hover', p: 1.5, borderRadius: 1.5, border: '1px solid', borderColor: 'divider' }}>
+                      {renderPoliciesTree(ns.policies, ns.name)}
+                    </Box>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Stack>
     </Box>
   );
 };

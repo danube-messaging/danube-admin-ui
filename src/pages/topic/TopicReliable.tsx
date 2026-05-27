@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography, Box, Paper, Stack } from '@mui/material';
+import { Grid, Typography, Box, Card, CardContent, Stack } from '@mui/material';
 import SaveIcon from '@mui/icons-material/SaveOutlined';
 import SpeedIcon from '@mui/icons-material/SpeedOutlined';
 
@@ -31,94 +31,98 @@ export const TopicReliable: React.FC<{ reliable: ReliableMetricsDto }> = ({ reli
       <Grid container spacing={3}>
         {/* WAL & Cloud Storage Operations */}
         <Grid size={{ xs: 12, md: 7 }}>
-          <Paper sx={{ p: 2.5, height: '100%', boxSizing: 'border-box' }}>
-            <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
-              <SaveIcon color="primary" />
-              <Typography variant="subtitle1" fontWeight="600">
-                Storage Operations (WAL & Cloud Backup)
-              </Typography>
-            </Stack>
-            <Box display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={2}>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  WAL Appends
+          <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                <SaveIcon color="primary" />
+                <Typography variant="subtitle1" fontWeight="600">
+                  Storage Operations (WAL & Cloud Backup)
                 </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {reliable.wal_append_total}
-                </Typography>
+              </Stack>
+              <Box display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={2}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    WAL Appends
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {reliable.wal_append_total}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    WAL Append Size
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {formatBytes(reliable.wal_append_bytes_total)}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    WAL fsync Total
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {reliable.wal_fsync_total}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Cloud Objects Uploaded
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {reliable.cloud_upload_objects_total}
+                  </Typography>
+                </Box>
+                <Box gridColumn="span 2">
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    Cloud Upload Size
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {formatBytes(reliable.cloud_upload_bytes_total)}
+                  </Typography>
+                </Box>
               </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  WAL Append Size
-                </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {formatBytes(reliable.wal_append_bytes_total)}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  WAL fsync Total
-                </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {reliable.wal_fsync_total}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  Cloud Objects Uploaded
-                </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {reliable.cloud_upload_objects_total}
-                </Typography>
-              </Box>
-              <Box gridColumn="span 2">
-                <Typography variant="caption" color="text.secondary" display="block">
-                  Cloud Upload Size
-                </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {formatBytes(reliable.cloud_upload_bytes_total)}
-                </Typography>
-              </Box>
-            </Box>
-          </Paper>
+            </CardContent>
+          </Card>
         </Grid>
 
         {/* Flush Latencies */}
         <Grid size={{ xs: 12, md: 5 }}>
-          <Paper sx={{ p: 2.5, height: '100%', boxSizing: 'border-box' }}>
-            <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
-              <SpeedIcon color="primary" />
-              <Typography variant="subtitle1" fontWeight="600">
-                WAL Flush Latency
-              </Typography>
-            </Stack>
-            <Box display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={2}>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  p50 (Median)
+          <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+            <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+              <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                <SpeedIcon color="primary" />
+                <Typography variant="subtitle1" fontWeight="600">
+                  WAL Flush Latency
                 </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {reliable.wal_flush_latency_ms_p50 ? `${reliable.wal_flush_latency_ms_p50.toFixed(2)} ms` : '0.00 ms'}
-                </Typography>
+              </Stack>
+              <Box display="grid" gridTemplateColumns="1fr 1fr 1fr" gap={2}>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    p50 (Median)
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {reliable.wal_flush_latency_ms_p50 ? `${reliable.wal_flush_latency_ms_p50.toFixed(2)} ms` : '0.00 ms'}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    p95
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {reliable.wal_flush_latency_ms_p95 ? `${reliable.wal_flush_latency_ms_p95.toFixed(2)} ms` : '0.00 ms'}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography variant="caption" color="text.secondary" display="block">
+                    p99
+                  </Typography>
+                  <Typography variant="h6" fontWeight="600">
+                    {reliable.wal_flush_latency_ms_p99 ? `${reliable.wal_flush_latency_ms_p99.toFixed(2)} ms` : '0.00 ms'}
+                  </Typography>
+                </Box>
               </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  p95
-                </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {reliable.wal_flush_latency_ms_p95 ? `${reliable.wal_flush_latency_ms_p95.toFixed(2)} ms` : '0.00 ms'}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary" display="block">
-                  p99
-                </Typography>
-                <Typography variant="h6" fontWeight="600">
-                  {reliable.wal_flush_latency_ms_p99 ? `${reliable.wal_flush_latency_ms_p99.toFixed(2)} ms` : '0.00 ms'}
-                </Typography>
-              </Box>
-            </Box>
-          </Paper>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </Box>

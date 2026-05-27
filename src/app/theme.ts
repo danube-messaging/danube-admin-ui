@@ -124,18 +124,8 @@ const theme = createTheme({
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
           boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.05)',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          '&:hover': {
-            borderColor: 'rgba(var(--danube-palette-primary-mainChannel), 0.4)',
-            boxShadow: '0 8px 32px 0 rgba(var(--danube-palette-primary-mainChannel), 0.15)',
-            transform: 'translateY(-2px)',
-          },
           ...theme.applyStyles('dark', {
             boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-            '&:hover': {
-              borderColor: 'rgba(var(--danube-palette-primary-mainChannel), 0.6)',
-              boxShadow: '0 8px 32px 0 rgba(var(--danube-palette-primary-mainChannel), 0.25)',
-            },
           }),
         }),
       },

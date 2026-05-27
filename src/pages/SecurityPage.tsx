@@ -306,7 +306,7 @@ export const SecurityPage: React.FC = () => {
 
       {/* Tab Panel 1: Roles */}
       <TabPanel value={tabValue} index={0}>
-        <Card variant="outlined" sx={{ borderRadius: 3 }}>
+        <Card variant="outlined">
           <CardContent sx={{ p: 0 }}>
             <TableContainer>
               <Table>
@@ -338,13 +338,14 @@ export const SecurityPage: React.FC = () => {
                                 size="small"
                                 color={getPermissionColor(p)}
                                 variant="outlined"
+                                sx={{ fontWeight: 600 }}
                               />
                             ))}
                           </Box>
                         </TableCell>
                         <TableCell align="center">
                           {role.system ? (
-                            <Chip label="System" size="small" variant="filled" sx={{ bgcolor: 'action.selected', color: 'text.secondary', fontWeight: 500 }} />
+                            <Chip label="System" size="small" variant="outlined" sx={{ fontWeight: 600 }} />
                           ) : (
                             <Typography variant="body2" color="text.secondary">—</Typography>
                           )}
@@ -371,7 +372,7 @@ export const SecurityPage: React.FC = () => {
 
       {/* Tab Panel 2: Bindings */}
       <TabPanel value={tabValue} index={1}>
-        <Card variant="outlined" sx={{ borderRadius: 3 }}>
+        <Card variant="outlined">
           <CardContent sx={{ p: 0 }}>
             <TableContainer>
               <Table>
@@ -409,14 +410,14 @@ export const SecurityPage: React.FC = () => {
                             label={b.scope.toUpperCase()}
                             size="small"
                             color={getScopeColor(b.scope)}
-                            variant="filled"
-                            sx={{ fontWeight: 600, fontSize: 10 }}
+                            variant="outlined"
+                            sx={{ fontWeight: 600 }}
                           />
                         </TableCell>
                         <TableCell>
                           <Box display="flex" flexWrap="wrap" gap={0.75}>
                             {b.role_names.map((r) => (
-                              <Chip key={r} label={r} size="small" variant="outlined" />
+                              <Chip key={r} label={r} size="small" variant="outlined" sx={{ fontWeight: 600 }} />
                             ))}
                           </Box>
                         </TableCell>
@@ -579,7 +580,7 @@ export const SecurityPage: React.FC = () => {
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {selected.map((value) => (
-                      <Chip key={value} label={value} size="small" />
+                      <Chip key={value} label={value} size="small" variant="outlined" sx={{ fontWeight: 600 }} />
                     ))}
                   </Box>
                 )}

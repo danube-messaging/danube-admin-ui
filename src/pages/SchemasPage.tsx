@@ -76,8 +76,8 @@ export const SchemasPage: React.FC = () => {
             label={params.row.schema_type.toUpperCase()}
             color={color}
             size="small"
-            variant="filled"
-            sx={{ fontWeight: 600, borderRadius: 1.5 }}
+            variant="outlined"
+            sx={{ fontWeight: 600 }}
           />
         );
       }
@@ -92,7 +92,7 @@ export const SchemasPage: React.FC = () => {
           label={`v${params.row.latest_version}`}
           size="small"
           variant="outlined"
-          sx={{ fontWeight: 500 }}
+          sx={{ fontWeight: 600 }}
         />
       )
     },

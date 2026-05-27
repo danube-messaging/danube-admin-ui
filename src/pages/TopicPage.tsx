@@ -14,6 +14,7 @@ import {
 import { useParams } from 'react-router-dom';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { useTopicPage } from '../features/topic/api';
+import TopicIcon from '@mui/icons-material/TopicOutlined';
 import { TopicKpis, TopicSchemaAndSubscriptions } from './topic/TopicSections';
 import type { TopicDto, TopicMetricsDto } from './topic/TopicSections';
 import { TopicCharts } from './topic/TopicCharts';
@@ -78,8 +79,11 @@ export const TopicPage: React.FC = () => {
         <>
           <Box mb={3}>
             <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'flex-start', md: 'center' }} justifyContent="space-between" gap={2}>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Typography variant="h4">Topic: {topic?.name}</Typography>
+              <Box display="flex" alignItems="center" gap={1.5}>
+                <TopicIcon color="primary" sx={{ fontSize: 32 }} />
+                <Typography variant="h4" sx={{ fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>
+                  Topic: {topic?.name}
+                </Typography>
               </Box>
               <Stack direction="row" gap={2} alignItems="center">
                 <ToggleButtonGroup

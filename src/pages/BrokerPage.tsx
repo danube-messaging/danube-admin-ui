@@ -7,8 +7,10 @@ import {
   Grid,
   Typography,
   Tooltip,
-  Fab,
+  IconButton,
+  Button,
   Chip,
+  Stack,
 } from '@mui/material';
 import { DataGrid, type GridColDef, type GridRowParams, GridToolbarContainer, GridToolbarQuickFilter, GridToolbarColumnsButton, type GridRenderCellParams } from '@mui/x-data-grid';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,12 +18,24 @@ import { useBrokerPage, type BrokerTopic } from '../features/broker/api';
 import AddIcon from '@mui/icons-material/AddOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import MoveIcon from '@mui/icons-material/DriveFileMoveOutlined';
+import DnsIcon from '@mui/icons-material/DnsOutlined';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import EqualizerIcon from '@mui/icons-material/Equalizer';
+import SyncIcon from '@mui/icons-material/Sync';
+import TrafficIcon from '@mui/icons-material/SwapCallsOutlined';
 import { useTopicActions } from '../features/topics/TopicsActions';
-import ReliableIcon from '@mui/icons-material/GppGood';
-import NonReliableIcon from '@mui/icons-material/GppBad';
 
 import { SkeletonBrokerPage } from '../components/common/SkeletonLoader';
 import { ErrorFallback } from '../components/common/ErrorFallback';
+
+const formatBytes = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
 
 export const BrokerPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -66,65 +80,120 @@ export const BrokerPage: React.FC = () => {
       {data && (
         <>
           <Box mb={3} display="flex" justifyContent="space-between" alignItems="flex-start">
-            <Box>
-              <Typography variant="h4" gutterBottom>
-                Broker {broker?.broker_id}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {broker?.broker_role} - {broker?.broker_addr}
-              </Typography>
+            <Box display="flex" alignItems="flex-start" gap={1.5}>
+              <DnsIcon color="primary" sx={{ fontSize: 32, mt: 0.5 }} />
+              <Box>
+                <Typography variant="h4" sx={{ fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>
+                  Broker {broker?.broker_id}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {broker?.broker_role} - {broker?.broker_addr}
+                </Typography>
+              </Box>
             </Box>
           </Box>
 
           <Grid container spacing={3} mb={3}>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Topics Owned
-                  </Typography>
-                  <Typography variant="h5">{metrics?.topics_owned}</Typography>
+            {/* Card 1: Broker Load */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                  <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                    <EqualizerIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Broker Load
+                    </Typography>
+                  </Stack>
+                  <Box display="grid" gridTemplateColumns="1fr" gap={2}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Topics Owned
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {metrics?.topics_owned ?? 0}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Total RPCs
-                  </Typography>
-                  <Typography variant="h5">{metrics?.rpc_total}</Typography>
+
+            {/* Card 2: Operations */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                  <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                    <SyncIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Operations
+                    </Typography>
+                  </Stack>
+                  <Box display="grid" gridTemplateColumns="1fr" gap={2}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Total RPCs
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {metrics?.rpc_total ?? 0}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Inbound Bytes
-                  </Typography>
-                  <Typography variant="h5">{metrics?.inbound_bytes_total}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-              <Card>
-                <CardContent>
-                  <Typography color="text.secondary" gutterBottom>
-                    Outbound Bytes
-                  </Typography>
-                  <Typography variant="h5">{metrics?.outbound_bytes_total}</Typography>
+
+            {/* Card 3: Traffic (Cumulative) */}
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Card variant="outlined" sx={{ height: '100%', boxSizing: 'border-box' }}>
+                <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
+                  <Stack direction="row" alignItems="center" gap={1.5} mb={2}>
+                    <TrafficIcon color="primary" />
+                    <Typography variant="subtitle1" fontWeight="600">
+                      Traffic (Cumulative)
+                    </Typography>
+                  </Stack>
+                  <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Inbound Bytes
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {formatBytes(metrics?.inbound_bytes_total ?? 0)}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        Outbound Bytes
+                      </Typography>
+                      <Typography variant="h6" fontWeight="600">
+                        {formatBytes(metrics?.outbound_bytes_total ?? 0)}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
 
-          <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-            <Typography variant="h6">Topics</Typography>
-            <Fab variant="extended" size="medium" color="primary" onClick={() => openCreateDialog()}>
-              <AddIcon sx={{ mr: 1 }} />
-              Create
-            </Fab>
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+            <Typography variant="h6" fontWeight="600">Topics</Typography>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => openCreateDialog()}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                px: 3,
+                boxShadow: 'none',
+                '&:hover': {
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              Create Topic
+            </Button>
           </Box>
           <Box sx={{ width: '100%' }}>
             <DataGrid<BrokerTopicRow>
@@ -138,12 +207,12 @@ export const BrokerPage: React.FC = () => {
                   sortable: true,
                   renderCell: (params: GridRenderCellParams<BrokerTopicRow>) => (
                     <Chip
-                      icon={params.row.delivery === 'Reliable' ? <ReliableIcon fontSize="small" /> : <NonReliableIcon fontSize="small" />}
+                      icon={params.row.delivery === 'Reliable' ? <CheckCircleOutlinedIcon fontSize="small" /> : <WarningAmberOutlinedIcon fontSize="small" />}
                       label={params.row.delivery === 'Reliable' ? 'Reliable' : 'NonReliable'}
                       color={params.row.delivery === 'Reliable' ? 'success' : 'warning'}
                       size="small"
-                      variant="filled"
-                      sx={{ borderRadius: 2, fontWeight: 600 }}
+                      variant="outlined"
+                      sx={{ fontWeight: 600 }}
                     />
                   ),
                 },
@@ -160,17 +229,17 @@ export const BrokerPage: React.FC = () => {
                   headerAlign: 'right',
                   renderCell: (params: GridRenderCellParams<BrokerTopicRow>) => (
                     <Tooltip title="Move to another broker">
-                      <Fab
-                        size="small"
+                      <IconButton
                         color="primary"
                         aria-label="move topic"
                         onClick={(e: React.MouseEvent) => {
                           e.stopPropagation();
                           openUnloadDialog(String(params.row.name));
                         }}
+                        size="small"
                       >
-                        <MoveIcon fontSize="small" />
-                      </Fab>
+                        <MoveIcon />
+                      </IconButton>
                     </Tooltip>
                   ),
                 },
@@ -184,17 +253,17 @@ export const BrokerPage: React.FC = () => {
                   headerAlign: 'right',
                   renderCell: (params: GridRenderCellParams<BrokerTopicRow>) => (
                     <Tooltip title="Delete topic">
-                      <Fab
-                        size="small"
+                      <IconButton
                         color="error"
                         aria-label="delete topic"
                         onClick={(e: React.MouseEvent) => {
                           e.stopPropagation();
                           openDeleteDialog(String(params.row.name));
                         }}
+                        size="small"
                       >
-                        <DeleteIcon fontSize="small" />
-                      </Fab>
+                        <DeleteIcon />
+                      </IconButton>
                     </Tooltip>
                   ),
                 },

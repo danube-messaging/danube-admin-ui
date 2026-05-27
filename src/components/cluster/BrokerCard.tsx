@@ -109,11 +109,6 @@ export const BrokerCard: React.FC<BrokerCardProps> = ({
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-          transform: 'translateY(-1px)',
-        },
       }}
     >
       <CardContent sx={{ flexGrow: 1, pb: 2 }}>
