@@ -36,8 +36,6 @@ Clicking on a broker card takes you to the broker detail page. Here you can see 
 ### Topics
 The Topics page lists all topics across the cluster with key metadata at a glance: delivery type, active producer, subscriptions and consumers.
 
-![Topics dashboard](public/topics_dashboard.png)
-
 Clicking on a topic opens its detail page, where you can inspect traffic metrics, active producers and consumers, subscriptions, and the schema associated with the topic.
 
 ![Topic detail page](public/topic_details.png)
@@ -46,6 +44,10 @@ Clicking on a topic opens its detail page, where you can inspect traffic metrics
 The Schema Registry page provides a browsable view of all registered schemas. You can inspect individual schema definitions, see which topics reference them, and review schema versions.
 
 ![Schema Registry](public/schema_registry.png)
+
+Clicking on a subject opens its detail page, where you can inspect individual schema versions.
+
+![Schema detail page](public/schema_details.png)
 
 ### Namespaces
 The Namespaces page lists all active namespaces in the cluster. You can create new namespaces or inspect administrative properties, allowing you to segment your messaging resources by environment, team, or application.
