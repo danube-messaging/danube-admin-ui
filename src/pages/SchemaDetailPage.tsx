@@ -147,7 +147,7 @@ export const SchemaDetailPage: React.FC = () => {
         <Stack direction="row" alignItems="center" gap={1.5}>
           <SchemaIcon color="primary" sx={{ fontSize: 32 }} />
           <Typography variant="h4" sx={{ fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>
-            {subject}
+            Schema: {subject}
           </Typography>
         </Stack>
 

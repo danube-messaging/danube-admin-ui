@@ -70,10 +70,10 @@ export const TopicCharts: React.FC<{ series: SeriesItem[] | null; error: string 
               title="Publish vs Dispatch rate (1m)"
               leftName="publish_rate_1m"
               leftData={pubDis.ya as number[]}
-              leftColor="#1976d2"
+              leftColor="var(--danube-palette-primary-main)"
               rightName="dispatch_rate_1m"
               rightData={pubDis.yb as number[]}
-              rightColor="#9c27b0"
+              rightColor="var(--danube-palette-info-main)"
               xData={pubDis.xData}
             />
           )}
@@ -86,10 +86,10 @@ export const TopicCharts: React.FC<{ series: SeriesItem[] | null; error: string 
               title="Bytes In/Out rate (1m)"
               leftName="bytes_in_rate_1m"
               leftData={bytesInOut.ya as number[]}
-              leftColor="#2e7d32"
+              leftColor="var(--danube-palette-success-main)"
               rightName="bytes_out_rate_1m"
               rightData={bytesInOut.yb as number[]}
-              rightColor="#ef6c00"
+              rightColor="var(--danube-palette-warning-main)"
               xData={bytesInOut.xData}
             />
           )}
