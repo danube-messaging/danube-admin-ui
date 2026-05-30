@@ -61,25 +61,25 @@ Manage access control policies for your messaging resources. You can configure c
 
 The easiest way to spin up Danube with the Admin Server and Web UI is using Docker Compose. The setup launches **3 Brokers (Raft Consensus)**, a **CLI tool container**, a **Prometheus instance**, the **Admin BFF Server**, and the **Web UI**.
 
-1. **Create a local directory** for the configuration:
+1. **Create the directory structure**:
+   The Docker Compose file expects `danube_broker.yml` and `prometheus.yml` one level above it, so create a parent directory with a `with-ui/` subdirectory:
    ```bash
-   mkdir danube-ui-demo && cd danube-ui-demo
+   mkdir -p danube-ui-demo/with-ui && cd danube-ui-demo
    ```
 
 2. **Download the required files** from the official GitHub repository:
    ```bash
-   # Download Docker Compose setup
-   wget https://raw.githubusercontent.com/danube-messaging/danube/main/docker/with-ui/docker-compose.yml
-
-   # Download Broker configuration
+   # Download Broker and Prometheus configuration (parent directory)
    wget https://raw.githubusercontent.com/danube-messaging/danube/main/docker/danube_broker.yml
-
-   # Download Prometheus configuration
    wget https://raw.githubusercontent.com/danube-messaging/danube/main/docker/prometheus.yml
+
+   # Download Docker Compose setup (with-ui/ subdirectory)
+   wget -P with-ui https://raw.githubusercontent.com/danube-messaging/danube/main/docker/with-ui/docker-compose.yml
    ```
 
 3. **Start the services**:
    ```bash
+   cd with-ui
    docker compose up -d
    ```
 
